@@ -1,57 +1,48 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/login/login",
-    "pages/register/register",
+    "pages/dashboard/dashboard",
+    "pages/students/students",
+    "pages/student-detail/student-detail",
+    "pages/tags/tags",
     "pages/profile/profile",
-    "pages/class/class",
-    "pages/class/class-simple",
-    "pages/homework/homework",
-    "pages/homework/create-simple",
-    "pages/points/points",
-    "pages/shop/shop",
-    "pages/parent/parent",
-    "pages/practice/practice",
-    "pages/mistakes/mistakes",
-    "pages/ai/ai",
-    "pages/courseware/courseware",
-    "pages/growth/growth",
-    "pages/settings/settings",
-    "pages/help/help",
-    "pages/mock-demo/mock-demo"
+    "pages/login/login"
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "智慧教育小程序",
-    "navigationBarTextStyle": "black",
+    "navigationBarBackgroundColor": "#4A90E2",
+    "navigationBarTitleText": "班级管理",
+    "navigationBarTextStyle": "white",
     "backgroundColor": "#f5f5f5"
   },
   "tabBar": {
-    "color": "#7A7E83",
-    "selectedColor": "#3cc51f",
-    "borderStyle": "black",
+    "color": "#666666",
+    "selectedColor": "#4A90E2",
     "backgroundColor": "#ffffff",
+    "borderStyle": "black",
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "text": "首页"
+        "pagePath": "pages/dashboard/dashboard",
+        "text": "概览",
+        "iconPath": "images/dashboard.png",
+        "selectedIconPath": "images/dashboard-active.png"
       },
       {
-        "pagePath": "pages/class/class",
-        "text": "班级"
+        "pagePath": "pages/students/students",
+        "text": "学生",
+        "iconPath": "images/students.png",
+        "selectedIconPath": "images/students-active.png"
       },
       {
-        "pagePath": "pages/homework/homework",
-        "text": "作业"
-      },
-      {
-        "pagePath": "pages/points/points",
-        "text": "积分"
+        "pagePath": "pages/tags/tags",
+        "text": "标签",
+        "iconPath": "images/tags.png",
+        "selectedIconPath": "images/tags-active.png"
       },
       {
         "pagePath": "pages/profile/profile",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "images/profile.png",
+        "selectedIconPath": "images/profile-active.png"
       }
     ]
   },
