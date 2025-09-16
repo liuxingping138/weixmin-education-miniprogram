@@ -1,0 +1,568 @@
+<!--pages/parent/parent.wxml-->
+<view class="parent-container">
+  <!-- 加载状态 -->
+  <t-loading wx:if="{{loading}}" theme="circular" size="40rpx" text="加载中..." />
+  
+  <!-- 顶部功能介绍 -->
+  <view class="header-section">
+    <view class="feature-intro">
+      <view class="intro-icon">👨‍👩‍👧‍👦</view>
+      <view class="intro-content">
+        <view class="intro-title">家校互动平台</view>
+        <view class="intro-desc">连接家庭与学校，共同关注孩子成长</view>
+      </view>
+    </view>
+    
+    <!-- 统计信息 -->
+    <view class="stats-grid">
+      <view class="stat-item">
+        <view class="stat-number">{{parentStats.reports}}</view>
+        <view class="stat-label">学习报告</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{parentStats.messages}}</view>
+        <view class="stat-label">互动消息</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{parentStats.activities}}</view>
+        <view class="stat-label">参与活动</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能导航 -->
+  <view class="nav-tabs">
+    <view 
+      class="nav-tab {{activeTab === 'report' ? 'active' : ''}}"
+      data-tab="report"
+      bindtap="switchTab"
+    >
+      <view class="tab-icon">📊</view>
+      <view class="tab-text">学习报告</view>
+    </view>
+    <view 
+      class="nav-tab {{activeTab === 'archive' ? 'active' : ''}}"
+      data-tab="archive"
+      bindtap="switchTab"
+    >
+      <view class="tab-icon">📁</view>
+      <view class="tab-text">成长档案</view>
+    </view>
+    <view 
+      class="nav-tab {{activeTab === 'communication' ? 'active' : ''}}"
+      data-tab="communication"
+      bindtap="switchTab"
+    >
+      <view class="tab-icon">💬</view>
+      <view class="tab-text">家校沟通</view>
+    </view>
+  </view>
+
+  <!-- 学习报告页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'report'}}">
+    <!-- 报告生成 -->
+    <view class="report-generator">
+      <view class="generator-header">
+        <view class="header-title">
+          <view class="title-icon">📋</view>
+          <text>生成学习报告</text>
+        </view>
+      </view>
+      
+      <view class="generator-config">
+        <!-- 学生选择 -->
+        <view class="config-item">
+          <view class="item-label">选择学生</view>
+          <view class="student-selector">
+            <view 
+              wx:for="{{students}}" 
+              wx:key="id"
+              class="student-option {{selectedStudent === item.id ? 'selected' : ''}}"
+              data-student="{{item.id}}"
+              bindtap="selectStudent"
+            >
+              <image src="{{item.avatar}}" class="student-avatar" />
+              <view class="student-name">{{item.name}}</view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 报告类型 -->
+        <view class="config-item">
+          <view class="item-label">报告类型</view>
+          <view class="report-types">
+            <view 
+              wx:for="{{reportTypes}}" 
+              wx:key="id"
+              class="type-option {{selectedReportType === item.id ? 'selected' : ''}}"
+              data-type="{{item.id}}"
+              bindtap="selectReportType"
+            >
+              <view class="type-icon">{{item.icon}}</view>
+              <view class="type-name">{{item.name}}</view>
+              <view class="type-desc">{{item.description}}</view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 时间范围 -->
+        <view class="config-item">
+          <view class="item-label">时间范围</view>
+          <view class="time-range">
+            <view 
+              wx:for="{{timeRanges}}" 
+              wx:key="id"
+              class="range-option {{selectedTimeRange === item.id ? 'selected' : ''}}"
+              data-range="{{item.id}}"
+              bindtap="selectTimeRange"
+            >
+              {{item.name}}
+            </view>
+          </view>
+        </view>
+        
+        <!-- 生成按钮 -->
+        <view class="generate-actions">
+          <t-button 
+            theme="primary" 
+            size="large"
+            loading="{{generatingReport}}"
+            disabled="{{!canGenerateReport}}"
+            bind:tap="generateReport"
+          >
+            {{generatingReport ? '生成中...' : '生成报告'}}
+          </t-button>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 历史报告 -->
+    <view class="report-history" wx:if="{{reportHistory.length > 0}}">
+      <view class="history-header">
+        <view class="history-title">
+          <view class="title-icon">📚</view>
+          <text>历史报告</text>
+        </view>
+      </view>
+      
+      <view class="report-list">
+        <view 
+          wx:for="{{reportHistory}}" 
+          wx:key="id"
+          class="report-item"
+          data-report="{{item}}"
+          bindtap="viewReport"
+        >
+          <view class="report-icon">
+            <view class="icon-bg {{item.type}}">{{item.typeIcon}}</view>
+          </view>
+          <view class="report-info">
+            <view class="report-title">{{item.title}}</view>
+            <view class="report-meta">
+              <view class="meta-item">
+                <view class="meta-icon">👤</view>
+                <text>{{item.studentName}}</text>
+              </view>
+              <view class="meta-item">
+                <view class="meta-icon">📅</view>
+                <text>{{item.createTime}}</text>
+              </view>
+              <view class="meta-item">
+                <view class="meta-icon">📄</view>
+                <text>{{item.pages}}页</text>
+              </view>
+            </view>
+          </view>
+          <view class="report-actions">
+            <t-button 
+              size="small" 
+              theme="light"
+              data-report="{{item}}"
+              bind:tap="downloadReport"
+              catch:tap="true"
+            >
+              下载
+            </t-button>
+            <t-button 
+              size="small" 
+              theme="primary"
+              data-report="{{item}}"
+              bind:tap="shareReport"
+              catch:tap="true"
+            >
+              分享
+            </t-button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 成长档案页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'archive'}}">
+    <!-- 档案概览 -->
+    <view class="archive-overview">
+      <view class="overview-header">
+        <view class="header-title">
+          <view class="title-icon">📖</view>
+          <text>成长档案</text>
+        </view>
+        <view class="header-actions">
+          <t-button size="small" theme="primary" bind:tap="exportArchive">
+            导出PDF
+          </t-button>
+        </view>
+      </view>
+      
+      <!-- 学生档案卡片 -->
+      <view class="student-cards">
+        <view 
+          wx:for="{{studentArchives}}" 
+          wx:key="id"
+          class="student-card"
+          data-student="{{item}}"
+          bindtap="viewStudentArchive"
+        >
+          <view class="card-header">
+            <image src="{{item.avatar}}" class="student-photo" />
+            <view class="student-info">
+              <view class="student-name">{{item.name}}</view>
+              <view class="student-class">{{item.className}}</view>
+              <view class="student-id">学号：{{item.studentId}}</view>
+            </view>
+          </view>
+          
+          <view class="card-stats">
+            <view class="stat-row">
+              <view class="stat-item">
+                <view class="stat-label">总积分</view>
+                <view class="stat-value">{{item.totalPoints}}</view>
+              </view>
+              <view class="stat-item">
+                <view class="stat-label">完成作业</view>
+                <view class="stat-value">{{item.completedHomework}}</view>
+              </view>
+            </view>
+            <view class="stat-row">
+              <view class="stat-item">
+                <view class="stat-label">平均分</view>
+                <view class="stat-value">{{item.averageScore}}</view>
+              </view>
+              <view class="stat-item">
+                <view class="stat-label">班级排名</view>
+                <view class="stat-value">{{item.classRank}}</view>
+              </view>
+            </view>
+          </view>
+          
+          <view class="card-progress">
+            <view class="progress-item">
+              <view class="progress-label">学习进度</view>
+              <view class="progress-bar">
+                <view class="progress-fill" style="width: {{item.learningProgress}}%"></view>
+              </view>
+              <view class="progress-text">{{item.learningProgress}}%</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 成长记录 -->
+    <view class="growth-records">
+      <view class="records-header">
+        <view class="header-title">
+          <view class="title-icon">🌱</view>
+          <text>成长记录</text>
+        </view>
+        <view class="header-filter">
+          <view 
+            wx:for="{{recordTypes}}" 
+            wx:key="id"
+            class="filter-option {{selectedRecordType === item.id ? 'active' : ''}}"
+            data-type="{{item.id}}"
+            bindtap="selectRecordType"
+          >
+            {{item.name}}
+          </view>
+        </view>
+      </view>
+      
+      <view class="record-timeline">
+        <view 
+          wx:for="{{filteredRecords}}" 
+          wx:key="id"
+          class="timeline-item"
+        >
+          <view class="timeline-dot {{item.type}}"></view>
+          <view class="timeline-content">
+            <view class="record-header">
+              <view class="record-title">{{item.title}}</view>
+              <view class="record-time">{{item.time}}</view>
+            </view>
+            <view class="record-desc">{{item.description}}</view>
+            <view class="record-media" wx:if="{{item.images.length > 0}}">
+              <image 
+                wx:for="{{item.images}}" 
+                wx:for-item="img" 
+                wx:key="*this"
+                src="{{img}}"
+                class="record-image"
+                mode="aspectFill"
+                data-images="{{item.images}}"
+                data-current="{{index}}"
+                bindtap="previewImages"
+              />
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 家校沟通页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'communication'}}">
+    <!-- 沟通方式 -->
+    <view class="communication-methods">
+      <view class="method-grid">
+        <view class="method-item" bindtap="openTeacherChat">
+          <view class="method-icon teacher">👩‍🏫</view>
+          <view class="method-name">老师私聊</view>
+          <view class="method-desc">与任课老师一对一沟通</view>
+          <view class="method-badge" wx:if="{{unreadTeacherMessages > 0}}">{{unreadTeacherMessages}}</view>
+        </view>
+        
+        <view class="method-item" bindtap="openClassGroup">
+          <view class="method-icon group">👥</view>
+          <view class="method-name">班级群聊</view>
+          <view class="method-desc">参与班级群组讨论</view>
+          <view class="method-badge" wx:if="{{unreadGroupMessages > 0}}">{{unreadGroupMessages}}</view>
+        </view>
+        
+        <view class="method-item" bindtap="openNotifications">
+          <view class="method-icon notice">📢</view>
+          <view class="method-name">通知公告</view>
+          <view class="method-desc">查看学校重要通知</view>
+          <view class="method-badge" wx:if="{{unreadNotifications > 0}}">{{unreadNotifications}}</view>
+        </view>
+        
+        <view class="method-item" bindtap="openFeedback">
+          <view class="method-icon feedback">💭</view>
+          <view class="method-name">意见反馈</view>
+          <view class="method-desc">向学校提出建议</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 最近消息 -->
+    <view class="recent-messages">
+      <view class="messages-header">
+        <view class="header-title">
+          <view class="title-icon">💬</view>
+          <text>最近消息</text>
+        </view>
+        <view class="header-action" bindtap="viewAllMessages">
+          查看全部
+        </view>
+      </view>
+      
+      <view class="message-list">
+        <view 
+          wx:for="{{recentMessages}}" 
+          wx:key="id"
+          class="message-item {{item.unread ? 'unread' : ''}}"
+          data-message="{{item}}"
+          bindtap="openMessage"
+        >
+          <view class="message-avatar">
+            <image src="{{item.senderAvatar}}" class="sender-avatar" />
+            <view class="message-type-badge {{item.type}}">{{item.typeIcon}}</view>
+          </view>
+          <view class="message-content">
+            <view class="message-header">
+              <view class="sender-name">{{item.senderName}}</view>
+              <view class="message-time">{{item.time}}</view>
+            </view>
+            <view class="message-preview">{{item.preview}}</view>
+            <view class="message-meta" wx:if="{{item.attachments > 0}}">
+              <view class="meta-icon">📎</view>
+              <text>{{item.attachments}}个附件</text>
+            </view>
+          </view>
+          <view class="message-status">
+            <view class="unread-dot" wx:if="{{item.unread}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 快捷操作 -->
+    <view class="quick-actions">
+      <view class="actions-header">
+        <view class="header-title">
+          <view class="title-icon">⚡</view>
+          <text>快捷操作</text>
+        </view>
+      </view>
+      
+      <view class="action-grid">
+        <view class="action-item" bindtap="requestLeave">
+          <view class="action-icon">🏥</view>
+          <view class="action-name">请假申请</view>
+        </view>
+        
+        <view class="action-item" bindtap="scheduleParentMeeting">
+          <view class="action-icon">📅</view>
+          <view class="action-name">预约家长会</view>
+        </view>
+        
+        <view class="action-item" bindtap="reportIssue">
+          <view class="action-icon">⚠️</view>
+          <view class="action-name">问题反馈</view>
+        </view>
+        
+        <view class="action-item" bindtap="viewSchedule">
+          <view class="action-icon">📋</view>
+          <view class="action-name">课程表</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <t-empty 
+    wx:if="{{isEmpty && !loading}}"
+    icon="data"
+    description="暂无数据"
+  />
+
+  <!-- Toast提示 -->
+  <t-toast 
+    visible="{{showToast}}"
+    message="{{toastMessage}}"
+    bind:close="onToastClose"
+  />
+
+  <!-- 报告详情弹窗 -->
+  <t-popup 
+    visible="{{showReportDetail}}"
+    placement="bottom"
+    bind:visible-change="onReportDetailClose"
+  >
+    <view class="report-detail" wx:if="{{selectedReport}}">
+      <view class="detail-header">
+        <view class="detail-title">{{selectedReport.title}}</view>
+        <view class="detail-close" bindtap="closeReportDetail">✕</view>
+      </view>
+      
+      <view class="detail-preview">
+        <image 
+          src="{{selectedReport.preview}}"
+          class="report-preview-image"
+          mode="aspectFit"
+        />
+      </view>
+      
+      <view class="detail-info">
+        <view class="info-row">
+          <view class="info-label">学生</view>
+          <view class="info-value">{{selectedReport.studentName}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">类型</view>
+          <view class="info-value">{{selectedReport.typeName}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">时间范围</view>
+          <view class="info-value">{{selectedReport.timeRange}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">生成时间</view>
+          <view class="info-value">{{selectedReport.createTime}}</view>
+        </view>
+        <view class="info-row">
+          <view class="info-label">页数</view>
+          <view class="info-value">{{selectedReport.pages}}页</view>
+        </view>
+      </view>
+      
+      <view class="detail-actions">
+        <t-button 
+          theme="light" 
+          size="large"
+          bind:tap="downloadSelectedReport"
+        >
+          下载PDF
+        </t-button>
+        <t-button 
+          theme="primary" 
+          size="large"
+          bind:tap="shareSelectedReport"
+        >
+          分享报告
+        </t-button>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- 学生档案详情弹窗 -->
+  <t-popup 
+    visible="{{showArchiveDetail}}"
+    placement="bottom"
+    bind:visible-change="onArchiveDetailClose"
+  >
+    <view class="archive-detail" wx:if="{{selectedStudentArchive}}">
+      <view class="detail-header">
+        <view class="detail-title">{{selectedStudentArchive.name}}的成长档案</view>
+        <view class="detail-close" bindtap="closeArchiveDetail">✕</view>
+      </view>
+      
+      <view class="detail-content">
+        <view class="archive-summary">
+          <view class="summary-item">
+            <view class="summary-label">在校天数</view>
+            <view class="summary-value">{{selectedStudentArchive.schoolDays}}天</view>
+          </view>
+          <view class="summary-item">
+            <view class="summary-label">获得奖励</view>
+            <view class="summary-value">{{selectedStudentArchive.rewards}}次</view>
+          </view>
+          <view class="summary-item">
+            <view class="summary-label">参与活动</view>
+            <view class="summary-value">{{selectedStudentArchive.activities}}次</view>
+          </view>
+        </view>
+        
+        <view class="archive-highlights">
+          <view class="highlights-title">成长亮点</view>
+          <view class="highlight-list">
+            <view 
+              wx:for="{{selectedStudentArchive.highlights}}" 
+              wx:key="*this"
+              class="highlight-item"
+            >
+              ✨ {{item}}
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="detail-actions">
+        <t-button 
+          theme="light" 
+          size="large"
+          bind:tap="exportSelectedArchive"
+        >
+          导出档案
+        </t-button>
+        <t-button 
+          theme="primary" 
+          size="large"
+          bind:tap="shareSelectedArchive"
+        >
+          分享档案
+        </t-button>
+      </view>
+    </view>
+  </t-popup>
+</view>

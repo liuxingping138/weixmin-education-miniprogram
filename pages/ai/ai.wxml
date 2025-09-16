@@ -1,0 +1,600 @@
+<!--pages/ai/ai.wxml-->
+<view class="ai-container">
+  <!-- 加载状态 -->
+  <loading-state wx:if="{{loading}}" />
+  
+  <!-- 页面头部 -->
+  <view class="ai-header">
+    <view class="header-title">
+      <text class="title-icon">🤖</text>
+      <text class="title-text">AI智能助手</text>
+    </view>
+    <view class="header-subtitle">个性化学习，智能化提升</view>
+  </view>
+
+  <!-- AI统计卡片 -->
+  <view class="stats-section">
+    <view class="stats-grid">
+      <view class="stat-item">
+        <view class="stat-icon">📊</view>
+        <view class="stat-value">{{aiStats.totalQuestions}}</view>
+        <view class="stat-label">生成题目</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-icon">💡</view>
+        <view class="stat-value">{{aiStats.recommendations}}</view>
+        <view class="stat-label">智能推荐</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-icon">🎯</view>
+        <view class="stat-value">{{aiStats.accuracy}}%</view>
+        <view class="stat-label">准确率</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-icon">📅</view>
+        <view class="stat-value">{{aiStats.studyDays}}</view>
+        <view class="stat-label">学习天数</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标签页导航 -->
+  <view class="tab-nav">
+    <view 
+      class="tab-item {{activeTab === 'generate' ? 'active' : ''}}"
+      data-tab="generate"
+      bindtap="switchTab"
+    >
+      <text class="tab-icon">🎲</text>
+      <text class="tab-text">智能出题</text>
+    </view>
+    <view 
+      class="tab-item {{activeTab === 'recommend' ? 'active' : ''}}"
+      data-tab="recommend"
+      bindtap="switchTab"
+    >
+      <text class="tab-icon">💡</text>
+      <text class="tab-text">个性推荐</text>
+    </view>
+    <view 
+      class="tab-item {{activeTab === 'analysis' ? 'active' : ''}}"
+      data-tab="analysis"
+      bindtap="switchTab"
+    >
+      <text class="tab-icon">📈</text>
+      <text class="tab-text">学习分析</text>
+    </view>
+  </view>
+
+  <!-- 智能出题页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'generate'}}">
+    <!-- 科目选择 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="title-icon">📚</text>
+        <text class="title-text">选择科目</text>
+      </view>
+      <view class="subject-grid">
+        <view 
+          wx:for="{{subjects}}" 
+          wx:key="id"
+          class="subject-item {{selectedSubject === item.id ? 'selected' : ''}}"
+          data-subject="{{item.id}}"
+          bindtap="selectSubject"
+          style="border-color: {{item.color}}"
+        >
+          <view class="subject-icon" style="background-color: {{item.color}}20">{{item.icon}}</view>
+          <view class="subject-name">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 知识点选择 -->
+    <view class="section" wx:if="{{knowledgePoints.length > 0}}">
+      <view class="section-title">
+        <text class="title-icon">🎯</text>
+        <text class="title-text">选择知识点（可选）</text>
+      </view>
+      <view class="knowledge-list">
+        <view 
+          wx:for="{{knowledgePoints}}" 
+          wx:key="id"
+          class="knowledge-item {{item.selected ? 'selected' : ''}}"
+          data-knowledge="{{item.id}}"
+          bindtap="toggleKnowledge"
+        >
+          <view class="knowledge-checkbox">
+            <text class="checkbox-icon" wx:if="{{item.selected}}">✓</text>
+          </view>
+          <view class="knowledge-info">
+            <view class="knowledge-name">{{item.name}}</view>
+            <view class="knowledge-difficulty">{{item.difficulty === 'easy' ? '简单' : item.difficulty === 'medium' ? '中等' : '困难'}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 难度选择 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="title-icon">⚡</text>
+        <text class="title-text">选择难度</text>
+      </view>
+      <view class="difficulty-list">
+        <view 
+          wx:for="{{difficulties}}" 
+          wx:key="value"
+          class="difficulty-item {{selectedDifficulty === item.value ? 'selected' : ''}}"
+          data-difficulty="{{item.value}}"
+          bindtap="selectDifficulty"
+          style="border-color: {{item.color}}"
+        >
+          <view class="difficulty-icon">{{item.icon}}</view>
+          <view class="difficulty-name">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 题目数量 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="title-icon">🔢</text>
+        <text class="title-text">题目数量</text>
+      </view>
+      <view class="quantity-selector">
+        <view class="quantity-btn" bindtap="decreaseQuantity">-</view>
+        <view class="quantity-value">{{questionQuantity}}</view>
+        <view class="quantity-btn" bindtap="increaseQuantity">+</view>
+      </view>
+    </view>
+
+    <!-- 生成按钮 -->
+    <view class="generate-section">
+      <button 
+        class="generate-btn {{generating ? 'generating' : ''}}"
+        bindtap="generateQuestions"
+        disabled="{{generating}}"
+      >
+        <text wx:if="{{!generating}}">🎲 AI智能生成题目</text>
+        <text wx:else>🤖 AI正在生成中...</text>
+      </button>
+    </view>
+
+    <!-- 生成的题目列表 -->
+    <view class="generated-section" wx:if="{{generatedQuestions.length > 0}}">
+      <view class="section-title">
+        <text class="title-icon">📝</text>
+        <text class="title-text">生成的题目 ({{generatedQuestions.length}}道)</text>
+      </view>
+      
+      <view class="question-actions">
+        <button class="action-btn primary" bindtap="startPractice">开始练习</button>
+        <button class="action-btn secondary" bindtap="saveQuestions">保存题目</button>
+        <button class="action-btn tertiary" bindtap="regenerateQuestions">重新生成</button>
+      </view>
+
+      <view class="question-list">
+        <view 
+          wx:for="{{generatedQuestions}}" 
+          wx:key="id"
+          class="question-item"
+          data-question="{{item}}"
+          bindtap="viewQuestionDetail"
+        >
+          <view class="question-header">
+            <view class="question-number">第{{item.id}}题</view>
+            <view class="question-difficulty" style="color: {{item.difficultyColor}}">
+              {{item.difficultyText}}
+            </view>
+            <view class="question-time">{{item.estimatedTime}}分钟</view>
+          </view>
+          <view class="question-content">{{item.question}}</view>
+          <view class="question-meta">
+            <view class="question-knowledge">{{item.knowledgePoint}}</view>
+            <view class="question-ai-score">AI评分: {{item.aiScore}}</view>
+          </view>
+          <view class="question-tags">
+            <text 
+              wx:for="{{item.tags}}" 
+              wx:for-item="tag"
+              wx:key="*this"
+              class="question-tag"
+            >{{tag}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 个性推荐页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'recommend'}}">
+    <!-- 今日推荐概览 -->
+    <view class="today-overview">
+      <view class="overview-title">今日推荐</view>
+      <view class="overview-stats">
+        <view class="overview-item">
+          <view class="overview-number">{{todayRecommendations.length}}</view>
+          <view class="overview-label">待完成</view>
+        </view>
+        <view class="overview-item">
+          <view class="overview-number">{{completedRecommendations}}</view>
+          <view class="overview-label">已完成</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 推荐分类筛选 -->
+    <view class="category-filter">
+      <scroll-view class="category-scroll" scroll-x="true">
+        <view class="category-list">
+          <view 
+            class="category-item {{selectedCategory === 'all' ? 'active' : ''}}"
+            data-category="all"
+            bindtap="selectCategory"
+          >
+            <text class="category-icon">📋</text>
+            <text class="category-name">全部</text>
+          </view>
+          <view 
+            wx:for="{{recommendCategories}}" 
+            wx:key="id"
+            class="category-item {{selectedCategory === item.id ? 'active' : ''}}"
+            data-category="{{item.id}}"
+            bindtap="selectCategory"
+          >
+            <text class="category-icon">{{item.icon}}</text>
+            <text class="category-name">{{item.name}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 推荐列表 -->
+    <view class="recommend-list">
+      <view 
+        wx:for="{{filteredRecommendations}}" 
+        wx:key="id"
+        class="recommend-item {{item.completed ? 'completed' : ''}}"
+        data-recommendation="{{item}}"
+        bindtap="viewRecommendation"
+      >
+        <view class="recommend-header">
+          <view class="recommend-icon">{{item.icon}}</view>
+          <view class="recommend-info">
+            <view class="recommend-title">{{item.title}}</view>
+            <view class="recommend-reason">{{item.reason}}</view>
+          </view>
+          <view class="recommend-priority {{item.priority}}">
+            {{item.priorityText}}
+          </view>
+        </view>
+        
+        <view class="recommend-content">
+          <view class="recommend-description">{{item.description}}</view>
+          <view class="recommend-meta">
+            <view class="meta-item">
+              <text class="meta-icon">⏱️</text>
+              <text class="meta-text">{{item.estimatedTime}}分钟</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">🎯</text>
+              <text class="meta-text">{{item.subject}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">🤖</text>
+              <text class="meta-text">AI评分{{item.aiScore}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="recommend-progress" wx:if="{{item.progress > 0}}">
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{item.progress}}%"></view>
+          </view>
+          <view class="progress-text">{{item.progress}}%</view>
+        </view>
+
+        <view class="recommend-actions">
+          <button 
+            class="action-btn {{item.completed ? 'completed' : 'primary'}}"
+            data-recommendation="{{item}}"
+            bindtap="startRecommendation"
+            disabled="{{item.completed}}"
+          >
+            {{item.completed ? '已完成' : '开始学习'}}
+          </button>
+          <button 
+            class="action-btn secondary"
+            data-recommendation="{{item}}"
+            bindtap="postponeRecommendation"
+            wx:if="{{!item.completed}}"
+          >
+            推迟
+          </button>
+        </view>
+
+        <view class="recommend-tags">
+          <text 
+            wx:for="{{item.tags}}" 
+            wx:for-item="tag"
+            wx:key="*this"
+            class="recommend-tag"
+          >{{tag}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <empty-state 
+      wx:if="{{filteredRecommendations.length === 0 && !loading}}"
+      icon="💡"
+      title="暂无推荐"
+      description="AI正在分析您的学习情况，稍后会为您推荐合适的学习内容"
+    />
+  </view>
+
+  <!-- 学习分析页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'analysis'}}">
+    <!-- 分析日期 -->
+    <view class="analysis-date">
+      <text class="date-icon">📅</text>
+      <text class="date-text">分析日期：{{analysisDate}}</text>
+    </view>
+
+    <!-- 学习状态评估 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="title-icon">📊</text>
+        <text class="title-text">学习状态评估</text>
+      </view>
+      <view class="status-grid">
+        <view 
+          wx:for="{{learningStatus}}" 
+          wx:key="type"
+          class="status-item"
+        >
+          <view class="status-icon">{{item.icon}}</view>
+          <view class="status-info">
+            <view class="status-name">{{item.name}}</view>
+            <view class="status-score">{{item.score}}分</view>
+            <view class="status-description">{{item.description}}</view>
+          </view>
+          <view class="status-progress">
+            <view class="progress-circle">
+              <view class="progress-text">{{item.score}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 优势与不足 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="title-icon">⚖️</text>
+        <text class="title-text">优势与不足</text>
+      </view>
+      
+      <view class="strengths-weaknesses">
+        <view class="strengths">
+          <view class="sw-title">
+            <text class="sw-icon">💪</text>
+            <text class="sw-text">学习优势</text>
+          </view>
+          <view class="sw-list">
+            <view 
+              wx:for="{{strengths}}" 
+              wx:key="*this"
+              class="sw-item strength"
+            >
+              <text class="sw-bullet">✓</text>
+              <text class="sw-content">{{item}}</text>
+            </view>
+          </view>
+        </view>
+        
+        <view class="weaknesses">
+          <view class="sw-title">
+            <text class="sw-icon">⚠️</text>
+            <text class="sw-text">待改进项</text>
+          </view>
+          <view class="sw-list">
+            <view 
+              wx:for="{{weaknesses}}" 
+              wx:key="*this"
+              class="sw-item weakness"
+            >
+              <text class="sw-bullet">!</text>
+              <text class="sw-content">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- AI智能建议 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="title-icon">🤖</text>
+        <text class="title-text">AI智能建议</text>
+      </view>
+      <view class="suggestions-list">
+        <view 
+          wx:for="{{aiSuggestions}}" 
+          wx:key="id"
+          class="suggestion-item"
+        >
+          <view class="suggestion-header">
+            <view class="suggestion-icon">{{item.icon}}</view>
+            <view class="suggestion-info">
+              <view class="suggestion-title">{{item.title}}</view>
+              <view class="suggestion-priority {{item.priority}}">
+                {{item.priorityText}}
+              </view>
+            </view>
+            <view class="suggestion-confidence">
+              <text class="confidence-text">可信度</text>
+              <text class="confidence-value">{{item.aiConfidence}}%</text>
+            </view>
+          </view>
+          
+          <view class="suggestion-content">{{item.content}}</view>
+          
+          <view class="suggestion-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📈</text>
+              <text class="meta-text">预期提升{{item.estimatedEffect}}%</text>
+            </view>
+          </view>
+          
+          <view class="suggestion-actions">
+            <button 
+              class="action-btn primary"
+              data-suggestion="{{item}}"
+              bindtap="applySuggestion"
+            >
+              应用建议
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 学习趋势图表占位 -->
+    <view class="section">
+      <view class="section-title">
+        <text class="title-icon">📈</text>
+        <text class="title-text">学习趋势</text>
+      </view>
+      <view class="chart-placeholder">
+        <text class="chart-text">📊 学习趋势图表</text>
+        <text class="chart-desc">显示最近30天的学习数据变化</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 推荐详情弹窗 -->
+  <t-popup
+    visible="{{showRecommendDetail}}"
+    placement="bottom"
+    bind:visible-change="onRecommendDetailClose"
+  >
+    <view class="recommend-detail" wx:if="{{selectedRecommendation}}">
+      <view class="detail-header">
+        <view class="detail-icon">{{selectedRecommendation.icon}}</view>
+        <view class="detail-title">{{selectedRecommendation.title}}</view>
+        <view class="detail-close" bindtap="closeRecommendDetail">×</view>
+      </view>
+      
+      <view class="detail-content">
+        <view class="detail-section">
+          <view class="detail-label">推荐原因</view>
+          <view class="detail-text">{{selectedRecommendation.reason}}</view>
+        </view>
+        
+        <view class="detail-section">
+          <view class="detail-label">学习目标</view>
+          <view class="detail-text">{{selectedRecommendation.goal}}</view>
+        </view>
+        
+        <view class="detail-section">
+          <view class="detail-label">预期收益</view>
+          <view class="detail-text">{{selectedRecommendation.benefit}}</view>
+        </view>
+        
+        <view class="detail-meta">
+          <view class="meta-row">
+            <view class="meta-item">
+              <text class="meta-label">科目：</text>
+              <text class="meta-value">{{selectedRecommendation.subject}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-label">知识点：</text>
+              <text class="meta-value">{{selectedRecommendation.knowledgePoint}}</text>
+            </view>
+          </view>
+          <view class="meta-row">
+            <view class="meta-item">
+              <text class="meta-label">预计时间：</text>
+              <text class="meta-value">{{selectedRecommendation.estimatedTime}}分钟</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-label">AI评分：</text>
+              <text class="meta-value">{{selectedRecommendation.aiScore}}分</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="detail-actions">
+        <button 
+          class="detail-btn primary"
+          bindtap="startSelectedRecommendation"
+          disabled="{{selectedRecommendation.completed}}"
+        >
+          {{selectedRecommendation.completed ? '已完成' : '开始学习'}}
+        </button>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- 题目详情弹窗 -->
+  <t-popup
+    visible="{{showQuestionDetail}}"
+    placement="bottom"
+    bind:visible-change="onQuestionDetailClose"
+  >
+    <view class="question-detail" wx:if="{{selectedQuestion}}">
+      <view class="detail-header">
+        <view class="detail-title">题目详情</view>
+        <view class="detail-close" bindtap="closeQuestionDetail">×</view>
+      </view>
+      
+      <view class="detail-content">
+        <view class="question-info">
+          <view class="question-number">第{{selectedQuestion.id}}题</view>
+          <view class="question-difficulty" style="color: {{selectedQuestion.difficultyColor}}">
+            {{selectedQuestion.difficultyText}}
+          </view>
+        </view>
+        
+        <view class="question-text">{{selectedQuestion.question}}</view>
+        
+        <view class="question-options" wx:if="{{selectedQuestion.type === 'choice'}}">
+          <view 
+            wx:for="{{selectedQuestion.options}}" 
+            wx:key="*this"
+            class="option-item"
+          >{{item}}</view>
+        </view>
+        
+        <view class="question-explanation">
+          <view class="explanation-title">题目解析</view>
+          <view class="explanation-text">{{selectedQuestion.explanation}}</view>
+        </view>
+        
+        <view class="question-meta">
+          <view class="meta-item">
+            <text class="meta-label">知识点：</text>
+            <text class="meta-value">{{selectedQuestion.knowledgePoint}}</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">预计用时：</text>
+            <text class="meta-value">{{selectedQuestion.estimatedTime}}分钟</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">相关题目：</text>
+            <text class="meta-value">{{selectedQuestion.relatedQuestions}}道</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </t-popup>
+
+  <!-- Toast提示 -->
+  <t-toast
+    visible="{{showToast}}"
+    message="{{toastMessage}}"
+    bind:close="onToastClose"
+  />
+</view>

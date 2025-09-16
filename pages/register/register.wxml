@@ -1,0 +1,317 @@
+<!--pages/register/register.wxml-->
+<view class="register-container">
+  <!-- 顶部导航 -->
+  <view class="nav-header">
+    <view class="nav-back" bindtap="backToLogin">
+      <text class="back-icon">←</text>
+    </view>
+    <view class="nav-title">注册账号</view>
+    <view class="nav-right"></view>
+  </view>
+
+  <!-- 步骤指示器 -->
+  <view class="step-indicator">
+    <view class="step-item {{step >= 1 ? 'active' : ''}}">
+      <view class="step-number">1</view>
+      <text class="step-text">基本信息</text>
+    </view>
+    <view class="step-line {{step >= 2 ? 'active' : ''}}"></view>
+    <view class="step-item {{step >= 2 ? 'active' : ''}}">
+      <view class="step-number">2</view>
+      <text class="step-text">身份验证</text>
+    </view>
+    <view class="step-line {{step >= 3 ? 'active' : ''}}"></view>
+    <view class="step-item {{step >= 3 ? 'active' : ''}}">
+      <view class="step-number">3</view>
+      <text class="step-text">完善资料</text>
+    </view>
+  </view>
+
+  <!-- 身份标识 -->
+  <view class="identity-badge">
+    <text class="identity-text">
+      {{identity === 'student' ? '学生注册' : identity === 'teacher' ? '教师注册' : '家长注册'}}
+    </text>
+  </view>
+
+  <!-- 第一步：基本信息 -->
+  <view class="form-step" wx:if="{{step === 1}}">
+    <view class="step-title">
+      <text class="title-text">基本信息</text>
+      <text class="title-desc">请填写您的手机号和密码</text>
+    </view>
+
+    <view class="form-group">
+      <view class="input-wrapper">
+        <t-icon name="mobile" class="input-icon" />
+        <input 
+          class="form-input"
+          type="number"
+          placeholder="请输入手机号"
+          value="{{phone}}"
+          bindinput="onPhoneInput"
+          maxlength="11"
+        />
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="input-wrapper">
+        <t-icon name="secured" class="input-icon" />
+        <input 
+          class="form-input code-input"
+          type="number"
+          placeholder="请输入验证码"
+          value="{{verifyCode}}"
+          bindinput="onCodeInput"
+          maxlength="6"
+        />
+        <button 
+          class="send-code-btn {{canSendCode && countdown === 0 ? '' : 'disabled'}}"
+          bindtap="sendVerifyCode"
+          disabled="{{!canSendCode || countdown > 0}}"
+        >
+          {{codeButtonText}}
+        </button>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="input-wrapper">
+        <t-icon name="lock-on" class="input-icon" />
+        <input 
+          class="form-input"
+          type="password"
+          placeholder="请设置密码（至少6位）"
+          value="{{password}}"
+          bindinput="onPasswordInput"
+        />
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="input-wrapper">
+        <image class="input-icon" src="/images/icon_password.png" />
+        <input 
+          class="form-input"
+          type="password"
+          placeholder="请确认密码"
+          value="{{confirmPassword}}"
+          bindinput="onConfirmPasswordInput"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 第二步：身份验证 -->
+  <view class="form-step" wx:if="{{step === 2}}">
+    <view class="step-title">
+      <text class="title-text">身份验证</text>
+      <text class="title-desc">请填写您的真实姓名和身份证号</text>
+    </view>
+
+    <view class="form-group">
+      <view class="input-wrapper">
+        <t-icon name="user" class="input-icon" />
+        <input 
+          class="form-input"
+          type="text"
+          placeholder="请输入真实姓名"
+          value="{{realName}}"
+          bindinput="onRealNameInput"
+        />
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="input-wrapper">
+        <t-icon name="user-circle" class="input-icon" />
+        <input 
+          class="form-input"
+          type="idcard"
+          placeholder="请输入身份证号"
+          value="{{idCard}}"
+          bindinput="onIdCardInput"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 第三步：完善资料 -->
+  <view class="form-step" wx:if="{{step === 3}}">
+    <!-- 学生资料 -->
+    <view wx:if="{{identity === 'student'}}">
+      <view class="step-title">
+        <text class="title-text">学生信息</text>
+        <text class="title-desc">请完善您的学生信息</text>
+      </view>
+
+      <view class="form-group">
+        <view class="input-wrapper">
+          <t-icon name="user-talk" class="input-icon" />
+          <input 
+            class="form-input"
+            type="text"
+            placeholder="请输入学号"
+            value="{{studentId}}"
+            bindinput="onStudentIdInput"
+          />
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="picker-wrapper">
+          <t-icon name="education" class="input-icon" />
+          <picker 
+            mode="selector" 
+            range="{{grades}}" 
+            bindchange="onGradeChange"
+          >
+            <view class="picker-text">{{grade || '请选择年级'}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="input-wrapper">
+          <t-icon name="usergroup" class="input-icon" />
+          <input 
+            class="form-input"
+            type="text"
+            placeholder="请输入班级（如：三年级1班）"
+            value="{{className}}"
+            bindinput="onClassNameInput"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 教师资料 -->
+    <view wx:if="{{identity === 'teacher'}}">
+      <view class="step-title">
+        <text class="title-text">教师信息</text>
+        <text class="title-desc">请完善您的教师信息</text>
+      </view>
+
+      <view class="form-group">
+        <view class="input-wrapper">
+          <t-icon name="user-avatar" class="input-icon" />
+          <input 
+            class="form-input"
+            type="text"
+            placeholder="请输入教师工号"
+            value="{{teacherId}}"
+            bindinput="onTeacherIdInput"
+          />
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="picker-wrapper">
+          <t-icon name="books" class="input-icon" />
+          <picker 
+            mode="selector" 
+            range="{{subjects}}" 
+            bindchange="onSubjectChange"
+          >
+            <view class="picker-text">{{subject || '请选择任教科目'}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="picker-wrapper">
+          <t-icon name="crown" class="input-icon" />
+          <picker 
+            mode="selector" 
+            range="{{titles}}" 
+            bindchange="onTitleChange"
+          >
+            <view class="picker-text">{{title || '请选择职称（可选）'}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 家长资料 -->
+    <view wx:if="{{identity === 'parent'}}">
+      <view class="step-title">
+        <text class="title-text">家长信息</text>
+        <text class="title-desc">请完善您孩子的信息</text>
+      </view>
+
+      <view class="form-group">
+        <view class="input-wrapper">
+          <t-icon name="user-talk" class="input-icon" />
+          <input 
+            class="form-input"
+            type="text"
+            placeholder="请输入孩子姓名"
+            value="{{childName}}"
+            bindinput="onChildNameInput"
+          />
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="input-wrapper">
+          <image class="input-icon" src="/images/icon_student_id.png" />
+          <input 
+            class="form-input"
+            type="text"
+            placeholder="请输入孩子学号"
+            value="{{childStudentId}}"
+            bindinput="onChildStudentIdInput"
+          />
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="picker-wrapper">
+          <t-icon name="heart" class="input-icon" />
+          <picker 
+            mode="selector" 
+            range="{{relationships}}" 
+            range-key="label"
+            bindchange="onRelationshipChange"
+          >
+            <view class="picker-text">
+              {{relationshipLabel || '请选择关系'}}
+            </view>
+          </picker>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button 
+      wx:if="{{step > 1}}"
+      class="prev-btn"
+      bindtap="prevStep"
+    >
+      上一步
+    </button>
+    
+    <button 
+      class="next-btn {{canNext ? '' : 'disabled'}}"
+      bindtap="nextStep"
+      disabled="{{!canNext}}"
+      loading="{{step === 3 && submitLoading}}"
+    >
+      {{step === 3 ? (submitLoading ? '注册中...' : '完成注册') : '下一步'}}
+    </button>
+  </view>
+
+  <!-- 登录链接 -->
+  <view class="login-link">
+    <text class="link-text">已有账号？</text>
+    <text class="link-action" bindtap="backToLogin">立即登录</text>
+  </view>
+</view>
+
+<!-- Toast提示 -->
+<view class="toast {{showToast ? 'show' : ''}}">
+  <text>{{toastMessage}}</text>
+</view>

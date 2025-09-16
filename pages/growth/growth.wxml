@@ -1,0 +1,581 @@
+<!--pages/growth/growth.wxml-->
+<view class="growth-container">
+  <!-- 加载状态 -->
+  <t-loading wx:if="{{loading}}" theme="circular" size="40rpx" text="加载中..." />
+  
+  <!-- 顶部功能介绍 -->
+  <view class="header-section">
+    <view class="feature-intro">
+      <view class="intro-icon">📊</view>
+      <view class="intro-content">
+        <view class="intro-title">成长分析</view>
+        <view class="intro-desc">全方位分析学生能力发展轨迹</view>
+      </view>
+    </view>
+    
+    <!-- 学生选择器 -->
+    <view class="student-selector">
+      <view class="selector-label">选择学生</view>
+      <view class="student-options">
+        <view 
+          wx:for="{{students}}" 
+          wx:key="id"
+          class="student-option {{selectedStudent === item.id ? 'selected' : ''}}"
+          data-student="{{item.id}}"
+          bindtap="selectStudent"
+        >
+          <image src="{{item.avatar}}" class="student-avatar" />
+          <view class="student-name">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能导航 -->
+  <view class="nav-tabs">
+    <view 
+      class="nav-tab {{activeTab === 'ability' ? 'active' : ''}}"
+      data-tab="ability"
+      bindtap="switchTab"
+    >
+      <view class="tab-icon">🎯</view>
+      <view class="tab-text">能力分析</view>
+    </view>
+    <view 
+      class="nav-tab {{activeTab === 'archive' ? 'active' : ''}}"
+      data-tab="archive"
+      bindtap="switchTab"
+    >
+      <view class="tab-icon">📚</view>
+      <view class="tab-text">成长档案</view>
+    </view>
+    <view 
+      class="nav-tab {{activeTab === 'report' ? 'active' : ''}}"
+      data-tab="report"
+      bindtap="switchTab"
+    >
+      <view class="tab-icon">📋</view>
+      <view class="tab-text">分析报告</view>
+    </view>
+  </view>
+
+  <!-- 能力分析页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'ability'}}">
+    <!-- 六边形能力雷达图 -->
+    <view class="ability-radar">
+      <view class="radar-header">
+        <view class="header-title">
+          <view class="title-icon">🎯</view>
+          <text>六维能力分析</text>
+        </view>
+        <view class="header-actions">
+          <view class="time-selector">
+            <view 
+              wx:for="{{timePeriods}}" 
+              wx:key="id"
+              class="time-option {{selectedTimePeriod === item.id ? 'active' : ''}}"
+              data-period="{{item.id}}"
+              bindtap="selectTimePeriod"
+            >
+              {{item.name}}
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="radar-chart">
+        <!-- 六边形雷达图容器 -->
+        <canvas 
+          canvas-id="abilityRadar" 
+          class="radar-canvas"
+          bindtouchstart="onRadarTouch"
+        ></canvas>
+        
+        <!-- 能力维度说明 -->
+        <view class="ability-legend">
+          <view 
+            wx:for="{{abilityDimensions}}" 
+            wx:key="id"
+            class="legend-item"
+            style="border-left-color: {{item.color}}"
+          >
+            <view class="legend-name">{{item.name}}</view>
+            <view class="legend-score">{{item.score}}</view>
+            <view class="legend-level">{{item.level}}</view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 能力详细分析 -->
+      <view class="ability-details">
+        <view class="details-header">
+          <view class="header-title">
+            <view class="title-icon">📈</view>
+            <text>能力详情</text>
+          </view>
+        </view>
+        
+        <view class="ability-list">
+          <view 
+            wx:for="{{abilityDimensions}}" 
+            wx:key="id"
+            class="ability-item"
+            data-ability="{{item}}"
+            bindtap="viewAbilityDetail"
+          >
+            <view class="ability-icon" style="background: {{item.color}}">{{item.icon}}</view>
+            <view class="ability-info">
+              <view class="ability-name">{{item.name}}</view>
+              <view class="ability-desc">{{item.description}}</view>
+              <view class="ability-progress">
+                <view class="progress-bar">
+                  <view 
+                    class="progress-fill" 
+                    style="width: {{item.score}}%; background: {{item.color}}"
+                  ></view>
+                </view>
+                <view class="progress-text">{{item.score}}/100</view>
+              </view>
+            </view>
+            <view class="ability-trend">
+              <view class="trend-icon {{item.trend}}">{{item.trendIcon}}</view>
+              <view class="trend-text">{{item.trendText}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 能力发展趋势 -->
+    <view class="ability-trends">
+      <view class="trends-header">
+        <view class="header-title">
+          <view class="title-icon">📊</view>
+          <text>发展趋势</text>
+        </view>
+      </view>
+      
+      <view class="trend-chart">
+        <canvas 
+          canvas-id="trendChart" 
+          class="trend-canvas"
+        ></canvas>
+      </view>
+      
+      <view class="trend-summary">
+        <view class="summary-item">
+          <view class="summary-label">最强能力</view>
+          <view class="summary-value">{{strongestAbility.name}}</view>
+          <view class="summary-score">{{strongestAbility.score}}分</view>
+        </view>
+        <view class="summary-item">
+          <view class="summary-label">待提升</view>
+          <view class="summary-value">{{weakestAbility.name}}</view>
+          <view class="summary-score">{{weakestAbility.score}}分</view>
+        </view>
+        <view class="summary-item">
+          <view class="summary-label">进步最快</view>
+          <view class="summary-value">{{fastestGrowth.name}}</view>
+          <view class="summary-score">+{{fastestGrowth.growth}}分</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 成长档案页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'archive'}}">
+    <!-- 档案概览 -->
+    <view class="archive-overview">
+      <view class="overview-header">
+        <view class="header-title">
+          <view class="title-icon">👤</view>
+          <text>学生档案</text>
+        </view>
+        <view class="header-actions">
+          <t-button size="small" theme="primary" bind:tap="exportArchive">
+            导出档案
+          </t-button>
+        </view>
+      </view>
+      
+      <view class="student-profile" wx:if="{{currentStudentProfile}}">
+        <view class="profile-header">
+          <image src="{{currentStudentProfile.avatar}}" class="profile-avatar" />
+          <view class="profile-info">
+            <view class="profile-name">{{currentStudentProfile.name}}</view>
+            <view class="profile-class">{{currentStudentProfile.className}}</view>
+            <view class="profile-id">学号：{{currentStudentProfile.studentId}}</view>
+          </view>
+          <view class="profile-stats">
+            <view class="stat-item">
+              <view class="stat-value">{{currentStudentProfile.totalDays}}</view>
+              <view class="stat-label">在校天数</view>
+            </view>
+            <view class="stat-item">
+              <view class="stat-value">{{currentStudentProfile.totalPoints}}</view>
+              <view class="stat-label">总积分</view>
+            </view>
+          </view>
+        </view>
+        
+        <view class="profile-achievements">
+          <view class="achievements-title">主要成就</view>
+          <view class="achievement-tags">
+            <view 
+              wx:for="{{currentStudentProfile.achievements}}" 
+              wx:key="*this"
+              class="achievement-tag"
+            >
+              {{item}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 成长时间轴 -->
+    <view class="growth-timeline">
+      <view class="timeline-header">
+        <view class="header-title">
+          <view class="title-icon">🌱</view>
+          <text>成长轨迹</text>
+        </view>
+        <view class="header-filter">
+          <view 
+            wx:for="{{timelineFilters}}" 
+            wx:key="id"
+            class="filter-option {{selectedTimelineFilter === item.id ? 'active' : ''}}"
+            data-filter="{{item.id}}"
+            bindtap="selectTimelineFilter"
+          >
+            {{item.name}}
+          </view>
+        </view>
+      </view>
+      
+      <view class="timeline-content">
+        <view 
+          wx:for="{{filteredTimelineEvents}}" 
+          wx:key="id"
+          class="timeline-event"
+        >
+          <view class="event-date">
+            <view class="date-month">{{item.month}}</view>
+            <view class="date-day">{{item.day}}</view>
+          </view>
+          <view class="event-line"></view>
+          <view class="event-content">
+            <view class="event-header">
+              <view class="event-type {{item.type}}">{{item.typeIcon}}</view>
+              <view class="event-title">{{item.title}}</view>
+              <view class="event-time">{{item.time}}</view>
+            </view>
+            <view class="event-desc">{{item.description}}</view>
+            <view class="event-media" wx:if="{{item.images && item.images.length > 0}}">
+              <image 
+                wx:for="{{item.images}}" 
+                wx:for-item="img" 
+                wx:key="*this"
+                src="{{img}}"
+                class="event-image"
+                mode="aspectFill"
+                data-images="{{item.images}}"
+                data-current="{{index}}"
+                bindtap="previewImages"
+              />
+            </view>
+            <view class="event-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+              <view 
+                wx:for="{{item.tags}}" 
+                wx:for-item="tag" 
+                wx:key="*this"
+                class="event-tag"
+              >
+                {{tag}}
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 学习统计 -->
+    <view class="learning-stats">
+      <view class="stats-header">
+        <view class="header-title">
+          <view class="title-icon">📊</view>
+          <text>学习统计</text>
+        </view>
+      </view>
+      
+      <view class="stats-grid">
+        <view class="stat-card">
+          <view class="card-icon homework">📝</view>
+          <view class="card-content">
+            <view class="card-title">作业完成</view>
+            <view class="card-value">{{learningStats.homeworkCompleted}}</view>
+            <view class="card-total">/ {{learningStats.homeworkTotal}}</view>
+            <view class="card-rate">完成率 {{learningStats.homeworkRate}}%</view>
+          </view>
+        </view>
+        
+        <view class="stat-card">
+          <view class="card-icon test">🎯</view>
+          <view class="card-content">
+            <view class="card-title">测试成绩</view>
+            <view class="card-value">{{learningStats.averageScore}}</view>
+            <view class="card-unit">分</view>
+            <view class="card-rate">平均分</view>
+          </view>
+        </view>
+        
+        <view class="stat-card">
+          <view class="card-icon activity">🏆</view>
+          <view class="card-content">
+            <view class="card-title">活动参与</view>
+            <view class="card-value">{{learningStats.activitiesJoined}}</view>
+            <view class="card-total">次</view>
+            <view class="card-rate">积极参与</view>
+          </view>
+        </view>
+        
+        <view class="stat-card">
+          <view class="card-icon points">⭐</view>
+          <view class="card-content">
+            <view class="card-title">获得积分</view>
+            <view class="card-value">{{learningStats.pointsEarned}}</view>
+            <view class="card-unit">分</view>
+            <view class="card-rate">本月获得</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分析报告页面 -->
+  <view class="tab-content" wx:if="{{activeTab === 'report'}}">
+    <!-- AI分析报告 -->
+    <view class="ai-analysis">
+      <view class="analysis-header">
+        <view class="header-title">
+          <view class="title-icon">🤖</view>
+          <text>AI智能分析</text>
+        </view>
+        <view class="header-actions">
+          <t-button 
+            size="small" 
+            theme="primary" 
+            loading="{{generatingReport}}"
+            bind:tap="generateAIReport"
+          >
+            {{generatingReport ? '生成中...' : '重新分析'}}
+          </t-button>
+        </view>
+      </view>
+      
+      <view class="analysis-content" wx:if="{{aiAnalysisReport}}">
+        <!-- 综合评价 -->
+        <view class="overall-assessment">
+          <view class="assessment-header">
+            <view class="assessment-title">综合评价</view>
+            <view class="assessment-score">{{aiAnalysisReport.overallScore}}</view>
+            <view class="assessment-level">{{aiAnalysisReport.overallLevel}}</view>
+          </view>
+          <view class="assessment-desc">{{aiAnalysisReport.overallDescription}}</view>
+        </view>
+        
+        <!-- 优势分析 -->
+        <view class="strengths-analysis">
+          <view class="section-title">
+            <view class="title-icon">💪</view>
+            <text>优势分析</text>
+          </view>
+          <view class="analysis-list">
+            <view 
+              wx:for="{{aiAnalysisReport.strengths}}" 
+              wx:key="*this"
+              class="analysis-item strength"
+            >
+              <view class="item-icon">✅</view>
+              <view class="item-text">{{item}}</view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 改进建议 -->
+        <view class="improvements-analysis">
+          <view class="section-title">
+            <view class="title-icon">🎯</view>
+            <text>改进建议</text>
+          </view>
+          <view class="analysis-list">
+            <view 
+              wx:for="{{aiAnalysisReport.improvements}}" 
+              wx:key="*this"
+              class="analysis-item improvement"
+            >
+              <view class="item-icon">💡</view>
+              <view class="item-text">{{item}}</view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 学习计划 -->
+        <view class="learning-plan">
+          <view class="section-title">
+            <view class="title-icon">📅</view>
+            <text>个性化学习计划</text>
+          </view>
+          <view class="plan-timeline">
+            <view 
+              wx:for="{{aiAnalysisReport.learningPlan}}" 
+              wx:key="id"
+              class="plan-item"
+            >
+              <view class="plan-period">{{item.period}}</view>
+              <view class="plan-content">
+                <view class="plan-title">{{item.title}}</view>
+                <view class="plan-desc">{{item.description}}</view>
+                <view class="plan-goals">
+                  <view 
+                    wx:for="{{item.goals}}" 
+                    wx:for-item="goal" 
+                    wx:key="*this"
+                    class="plan-goal"
+                  >
+                    • {{goal}}
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 历史报告 -->
+    <view class="history-reports">
+      <view class="reports-header">
+        <view class="header-title">
+          <view class="title-icon">📚</view>
+          <text>历史报告</text>
+        </view>
+      </view>
+      
+      <view class="report-list">
+        <view 
+          wx:for="{{historyReports}}" 
+          wx:key="id"
+          class="report-item"
+          data-report="{{item}}"
+          bindtap="viewHistoryReport"
+        >
+          <view class="report-icon">
+            <view class="icon-bg {{item.type}}">{{item.typeIcon}}</view>
+          </view>
+          <view class="report-info">
+            <view class="report-title">{{item.title}}</view>
+            <view class="report-meta">
+              <view class="meta-item">
+                <view class="meta-icon">📅</view>
+                <text>{{item.createTime}}</text>
+              </view>
+              <view class="meta-item">
+                <view class="meta-icon">⭐</view>
+                <text>{{item.score}}分</text>
+              </view>
+            </view>
+            <view class="report-summary">{{item.summary}}</view>
+          </view>
+          <view class="report-actions">
+            <t-button 
+              size="small" 
+              theme="light"
+              data-report="{{item}}"
+              bind:tap="downloadHistoryReport"
+              catch:tap="true"
+            >
+              下载
+            </t-button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <t-empty 
+    wx:if="{{isEmpty && !loading}}"
+    icon="data"
+    description="暂无数据"
+  />
+
+  <!-- Toast提示 -->
+  <t-toast 
+    visible="{{showToast}}"
+    message="{{toastMessage}}"
+    bind:close="onToastClose"
+  />
+
+  <!-- 能力详情弹窗 -->
+  <t-popup 
+    visible="{{showAbilityDetail}}"
+    placement="bottom"
+    bind:visible-change="onAbilityDetailClose"
+  >
+    <view class="ability-detail" wx:if="{{selectedAbility}}">
+      <view class="detail-header">
+        <view class="detail-title">{{selectedAbility.name}}能力详情</view>
+        <view class="detail-close" bindtap="closeAbilityDetail">✕</view>
+      </view>
+      
+      <view class="detail-content">
+        <view class="ability-overview">
+          <view class="overview-score">
+            <view class="score-circle" style="border-color: {{selectedAbility.color}}">
+              <view class="score-value">{{selectedAbility.score}}</view>
+              <view class="score-max">/100</view>
+            </view>
+            <view class="score-level">{{selectedAbility.level}}</view>
+          </view>
+          <view class="overview-desc">{{selectedAbility.detailDescription}}</view>
+        </view>
+        
+        <view class="ability-breakdown">
+          <view class="breakdown-title">能力构成</view>
+          <view class="breakdown-list">
+            <view 
+              wx:for="{{selectedAbility.breakdown}}" 
+              wx:key="name"
+              class="breakdown-item"
+            >
+              <view class="breakdown-name">{{item.name}}</view>
+              <view class="breakdown-progress">
+                <view class="progress-bar">
+                  <view 
+                    class="progress-fill" 
+                    style="width: {{item.score}}%; background: {{selectedAbility.color}}"
+                  ></view>
+                </view>
+                <view class="progress-score">{{item.score}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <view class="ability-suggestions">
+          <view class="suggestions-title">提升建议</view>
+          <view class="suggestion-list">
+            <view 
+              wx:for="{{selectedAbility.suggestions}}" 
+              wx:key="*this"
+              class="suggestion-item"
+            >
+              💡 {{item}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </t-popup>
+</view>

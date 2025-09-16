@@ -1,0 +1,33 @@
+/* 补丁：统一 t-icon 尺寸与对齐（shop） */
+.points-icon,
+.action-icon,
+.search-icon,
+.points-mini-icon,
+.modal-close {
+  font-size: 32rpx; /* 默认尺寸 */
+  color: #1890ff;   /* 主题色 */
+  vertical-align: middle;
+}
+
+/* 小型星标图标用于积分数前 */
+.points-mini-icon {
+  font-size: 24rpx;
+  color: #faad14;
+}
+
+/* 顶部积分图标稍大更醒目 */
+.points-icon {
+  font-size: 36rpx;
+}
+
+/* 模态框关闭按钮定位（若已有定位，请按需合并） */
+.modal-close {
+  font-size: 40rpx;
+  color: #8c8c8c;
+}
+
+/* 图标所在容器的对齐微调（如需要） */
+.action-icon,
+.search-icon {
+  margin-right: 12rpx;
+}

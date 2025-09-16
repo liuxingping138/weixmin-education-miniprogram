@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/profile/profile",
+    "pages/class/class",
+    "pages/class/class-simple",
+    "pages/homework/homework",
+    "pages/homework/create-simple",
+    "pages/points/points",
+    "pages/shop/shop",
+    "pages/parent/parent",
+    "pages/practice/practice",
+    "pages/mistakes/mistakes",
+    "pages/ai/ai",
+    "pages/courseware/courseware",
+    "pages/growth/growth",
+    "pages/settings/settings",
+    "pages/help/help",
+    "pages/mock-demo/mock-demo"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "智慧教育小程序",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5f5f5"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#3cc51f",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/class/class",
+        "text": "班级"
+      },
+      {
+        "pagePath": "pages/homework/homework",
+        "text": "作业"
+      },
+      {
+        "pagePath": "pages/points/points",
+        "text": "积分"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true,
+  "sitemapLocation": "sitemap.json"
+}

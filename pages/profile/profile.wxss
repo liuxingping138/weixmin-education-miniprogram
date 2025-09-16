@@ -1,0 +1,20 @@
+/* 补丁：统一 t-icon 尺寸与对齐（profile） */
+.edit-icon {
+  font-size: 28rpx;
+  color: #ffffff;
+  vertical-align: middle;
+}
+
+.mock-icon {
+  font-size: 32rpx;
+  color: #1890ff;
+  margin-right: 12rpx;
+  vertical-align: middle;
+}
+
+.mock-arrow,
+.menu-arrow {
+  font-size: 28rpx;
+  color: #bfbfbf;
+  vertical-align: middle;
+}

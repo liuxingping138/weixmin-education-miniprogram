@@ -1,0 +1,52 @@
+<!--components/common-header/common-header.wxml-->
+<view class="header-container {{bgType}}">
+  <!-- 背景图片 -->
+  <image wx:if="{{bgType === 'image' && bgImage}}" 
+         src="{{bgImage}}" 
+         class="header-bg-image" 
+         mode="aspectFill" />
+  
+  <!-- 顶部导航栏 -->
+  <view class="header-nav">
+    <view class="nav-left">
+      <view wx:if="{{showBack}}" class="back-btn" bindtap="onBack">
+        <text class="back-icon">←</text>
+      </view>
+    </view>
+    <view class="nav-center">
+      <text class="nav-title">{{title}}</text>
+    </view>
+    <view class="nav-right">
+      <view wx:for="{{rightActions}}" 
+            wx:key="id" 
+            class="action-btn"
+            data-action="{{item}}"
+            bindtap="onRightAction">
+        <text class="action-icon">{{item.icon}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主要内容 -->
+  <view class="header-content">
+    <view class="content-main">
+      <view class="main-title">{{title}}</view>
+      <view wx:if="{{subtitle}}" class="main-subtitle">{{subtitle}}</view>
+    </view>
+    
+    <!-- 统计数据 -->
+    <view wx:if="{{stats.length > 0}}" class="header-stats">
+      <view wx:for="{{stats}}" 
+            wx:key="label" 
+            class="stat-item"
+            data-stat="{{item}}"
+            bindtap="onStatTap">
+        <view class="stat-value">{{item.value}}</view>
+        <view class="stat-label">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 插槽内容 -->
+  <slot></slot>
+</view>

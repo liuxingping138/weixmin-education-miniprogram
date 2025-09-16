@@ -1,0 +1,258 @@
+<!--pages/settings/settings.wxml-->
+<view class="container">
+  <!-- 通知设置 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="notification" class="section-icon" />
+      <text class="section-title">通知设置</text>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">作业通知</text>
+      <switch class="setting-switch" 
+             checked="{{settings.notifications.homework}}" 
+             bindchange="toggleNotification"
+             data-type="homework"></switch>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">积分通知</text>
+      <switch class="setting-switch" 
+             checked="{{settings.notifications.points}}" 
+             bindchange="toggleNotification"
+             data-type="points"></switch>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">班级动态</text>
+      <switch class="setting-switch" 
+             checked="{{settings.notifications.class}}" 
+             bindchange="toggleNotification"
+             data-type="class"></switch>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">系统通知</text>
+      <switch class="setting-switch" 
+             checked="{{settings.notifications.system}}" 
+             bindchange="toggleNotification"
+             data-type="system"></switch>
+    </view>
+  </view>
+
+  <!-- 隐私设置 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="lock-on" class="section-icon" />
+      <text class="section-title">隐私设置</text>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">公开个人资料</text>
+      <switch class="setting-switch" 
+             checked="{{settings.privacy.showProfile}}" 
+             bindchange="togglePrivacy"
+             data-type="showProfile"></switch>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">显示学习进度</text>
+      <switch class="setting-switch" 
+             checked="{{settings.privacy.showProgress}}" 
+             bindchange="togglePrivacy"
+             data-type="showProgress"></switch>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">允许搜索到我</text>
+      <switch class="setting-switch" 
+             checked="{{settings.privacy.allowSearch}}" 
+             bindchange="togglePrivacy"
+             data-type="allowSearch"></switch>
+    </view>
+  </view>
+
+  <!-- 显示设置 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="view-module" class="section-icon" />
+      <text class="section-title">显示设置</text>
+    </view>
+    
+    <!-- 主题设置 -->
+    <view class="setting-item">
+      <text class="setting-label">主题模式</text>
+      <view class="theme-options">
+        <view class="theme-option {{settings.display.theme === 'light' ? 'active' : ''}}"
+              bindtap="changeTheme" data-theme="light">
+          <text class="theme-text">浅色</text>
+        </view>
+        <view class="theme-option {{settings.display.theme === 'dark' ? 'active' : ''}}"
+              bindtap="changeTheme" data-theme="dark">
+          <text class="theme-text">深色</text>
+        </view>
+        <view class="theme-option {{settings.display.theme === 'auto' ? 'active' : ''}}"
+              bindtap="changeTheme" data-theme="auto">
+          <text class="theme-text">自动</text>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 字体大小 -->
+    <view class="setting-item">
+      <text class="setting-label">字体大小</text>
+      <view class="font-options">
+        <view class="font-option {{settings.display.fontSize === 'small' ? 'active' : ''}}"
+              bindtap="changeFontSize" data-size="small">
+          <text class="font-text small">小</text>
+        </view>
+        <view class="font-option {{settings.display.fontSize === 'medium' ? 'active' : ''}}"
+              bindtap="changeFontSize" data-size="medium">
+          <text class="font-text medium">中</text>
+        </view>
+        <view class="font-option {{settings.display.fontSize === 'large' ? 'active' : ''}}"
+              bindtap="changeFontSize" data-size="large">
+          <text class="font-text large">大</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能设置 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="setting" class="section-icon" />
+      <text class="section-title">功能设置</text>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">AI学习建议</text>
+      <switch class="setting-switch" 
+             checked="{{settings.features.aiSuggestions}}" 
+             bindchange="toggleFeature"
+             data-type="aiSuggestions"></switch>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">自动备份</text>
+      <switch class="setting-switch" 
+             checked="{{settings.features.autoBackup}}" 
+             bindchange="toggleFeature"
+             data-type="autoBackup"></switch>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">离线模式</text>
+      <switch class="setting-switch" 
+             checked="{{settings.features.offlineMode}}" 
+             bindchange="toggleFeature"
+             data-type="offlineMode"></switch>
+    </view>
+  </view>
+
+  <!-- Mock开发设置 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="code" class="section-icon" />
+      <text class="section-title">开发设置</text>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">Mock数据模式</text>
+      <switch class="setting-switch" 
+             checked="{{mockSettings.enabled}}" 
+             bindchange="toggleMock"></switch>
+    </view>
+    
+    <view class="setting-item" wx:if="{{mockSettings.enabled}}">
+      <text class="setting-label">网络延迟 ({{mockSettings.delay}}ms)</text>
+      <slider class="delay-slider"
+              min="0" max="2000" step="100"
+              value="{{mockSettings.delay}}"
+              bindchange="changeMockDelay"
+              show-value></slider>
+    </view>
+  </view>
+
+  <!-- 存储管理 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="folder" class="section-icon" />
+      <text class="section-title">存储管理</text>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">缓存大小</text>
+      <view class="setting-value">
+        <text class="cache-size">{{cacheSize}}</text>
+        <button class="clear-btn" bindtap="clearCache">清除</button>
+      </view>
+    </view>
+    
+    <view class="setting-item" bindtap="exportData">
+      <text class="setting-label">导出数据</text>
+      <t-icon name="chevron-right" class="setting-arrow" />
+    </view>
+  </view>
+
+  <!-- 系统信息 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="info-circle" class="section-icon" />
+      <text class="section-title">系统信息</text>
+    </view>
+    
+    <view class="info-item">
+      <text class="info-label">应用版本</text>
+      <text class="info-value">{{appVersion}}</text>
+    </view>
+    
+    <view class="info-item">
+      <text class="info-label">系统版本</text>
+      <text class="info-value">{{systemInfo.system}}</text>
+    </view>
+    
+    <view class="info-item">
+      <text class="info-label">设备型号</text>
+      <text class="info-value">{{systemInfo.model}}</text>
+    </view>
+    
+    <view class="setting-item" bindtap="checkUpdate">
+      <text class="setting-label">检查更新</text>
+      <image class="setting-arrow" src="/images/icon_arrow_right.png" />
+    </view>
+  </view>
+
+  <!-- 其他设置 -->
+  <view class="settings-section">
+    <view class="section-header">
+      <t-icon name="ellipsis" class="section-icon" />
+      <text class="section-title">其他</text>
+    </view>
+    
+    <view class="setting-item" bindtap="feedback">
+      <text class="setting-label">意见反馈</text>
+      <image class="setting-arrow" src="/images/icon_arrow_right.png" />
+    </view>
+    
+    <view class="setting-item" bindtap="about">
+      <text class="setting-label">关于我们</text>
+      <image class="setting-arrow" src="/images/icon_arrow_right.png" />
+    </view>
+    
+    <view class="setting-item" bindtap="userAgreement">
+      <text class="setting-label">用户协议</text>
+      <image class="setting-arrow" src="/images/icon_arrow_right.png" />
+    </view>
+    
+    <view class="setting-item" bindtap="privacyPolicy">
+      <text class="setting-label">隐私政策</text>
+      <image class="setting-arrow" src="/images/icon_arrow_right.png" />
+    </view>
+  </view>
+
+  <!-- 重置设置 -->
+  <view class="reset-section">
+    <button class="reset-btn" bindtap="resetSettings">重置所有设置</button>
+  </view>
+</view>

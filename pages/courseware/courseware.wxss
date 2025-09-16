@@ -1,0 +1,840 @@
+/* pages/courseware/courseware.wxss */
+.courseware-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding-bottom: 40rpx;
+}
+
+/* 顶部功能介绍 */
+.header-section {
+  background: rgba(255, 255, 255, 0.95);
+  margin: 20rpx;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10rpx);
+}
+
+.feature-intro {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40rpx;
+}
+
+.intro-icon {
+  font-size: 80rpx;
+  margin-right: 24rpx;
+}
+
+.intro-content {
+  flex: 1;
+}
+
+.intro-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 8rpx;
+}
+
+.intro-desc {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat-item {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 功能导航 */
+.nav-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.9);
+  margin: 0 20rpx 20rpx;
+  border-radius: 20rpx;
+  padding: 8rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 16rpx;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.nav-tab.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}
+
+.tab-icon {
+  font-size: 32rpx;
+  margin-bottom: 8rpx;
+}
+
+.tab-text {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.nav-tab.active .tab-text {
+  color: white;
+}
+
+/* 标签页内容 */
+.tab-content {
+  margin: 0 20rpx;
+}
+
+/* PPT生成配置 */
+.generate-config {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.config-section {
+  padding: 40rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.title-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.section-title text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.config-item {
+  margin-bottom: 40rpx;
+}
+
+.item-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+/* 科目网格 */
+.subject-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.subject-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 16rpx;
+  background: #fafafa;
+  transition: all 0.3s ease;
+  min-width: 120rpx;
+}
+
+.subject-item.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}
+
+.subject-icon {
+  font-size: 32rpx;
+  margin-bottom: 8rpx;
+}
+
+.subject-name {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+/* 内容要点 */
+.content-points {
+  space-y: 16rpx;
+}
+
+.point-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.point-item t-input {
+  flex: 1;
+}
+
+.point-delete {
+  font-size: 24rpx;
+  padding: 8rpx;
+  cursor: pointer;
+}
+
+.add-point {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx;
+  border: 2rpx dashed #ccc;
+  border-radius: 12rpx;
+  color: #666;
+  font-size: 28rpx;
+  transition: all 0.3s ease;
+}
+
+.add-point:active {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.add-icon {
+  margin-right: 8rpx;
+}
+
+/* 模板网格 */
+.template-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.template-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 16rpx;
+  background: #fafafa;
+  transition: all 0.3s ease;
+  width: calc(50% - 8rpx);
+}
+
+.template-item.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.2);
+}
+
+.template-preview {
+  width: 100%;
+  height: 120rpx;
+  margin-bottom: 12rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.template-image {
+  width: 100%;
+  height: 100%;
+}
+
+.template-name {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+}
+
+/* 生成按钮 */
+.generate-actions {
+  margin-top: 40rpx;
+  padding-top: 32rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+/* 生成结果 */
+.generate-result {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  margin-top: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 40rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.result-title {
+  display: flex;
+  align-items: center;
+}
+
+.result-title text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.result-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.slide-list {
+  padding: 20rpx;
+}
+
+.slide-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  background: #fafafa;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.slide-item:active {
+  background: #f0f0f0;
+  transform: scale(0.98);
+}
+
+.slide-preview {
+  width: 120rpx;
+  height: 80rpx;
+  margin-right: 20rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+}
+
+.slide-info {
+  flex: 1;
+}
+
+.slide-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.slide-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+.slide-number {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  background: #667eea;
+  color: white;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+}
+
+/* 动画分类 */
+.animation-categories {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20rpx;
+  margin-bottom: 20rpx;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.category-tab {
+  padding: 16rpx 24rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.category-tab.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+}
+
+/* 动画列表 */
+.animation-list {
+  space-y: 20rpx;
+}
+
+.animation-item {
+  display: flex;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.animation-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.animation-preview {
+  position: relative;
+  width: 160rpx;
+  height: 120rpx;
+  margin-right: 20rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.animation-thumbnail {
+  width: 100%;
+  height: 100%;
+}
+
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.play-icon {
+  font-size: 32rpx;
+  color: white;
+}
+
+.animation-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.animation-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.animation-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 12rpx;
+  flex: 1;
+}
+
+.animation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.meta-icon {
+  font-size: 20rpx;
+  margin-right: 4rpx;
+}
+
+.animation-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* 课件库筛选 */
+.library-filters {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20rpx;
+  margin-bottom: 20rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.filter-row {
+  margin-bottom: 24rpx;
+}
+
+.filter-row:last-child {
+  margin-bottom: 0;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.filter-option {
+  padding: 12rpx 20rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  color: #666;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.filter-option.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+}
+
+/* 课件列表 */
+.courseware-list {
+  space-y: 20rpx;
+}
+
+.courseware-item {
+  display: flex;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.courseware-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.courseware-preview {
+  position: relative;
+  width: 160rpx;
+  height: 120rpx;
+  margin-right: 20rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.courseware-cover {
+  width: 100%;
+  height: 100%;
+}
+
+.courseware-badge {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  background: #ff4757;
+  color: white;
+  font-size: 20rpx;
+  padding: 4rpx 8rpx;
+  border-radius: 8rpx;
+}
+
+.courseware-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.courseware-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.courseware-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 12rpx;
+  flex: 1;
+}
+
+.courseware-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.courseware-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  align-items: flex-end;
+}
+
+/* 弹窗样式 */
+.animation-detail,
+.courseware-detail {
+  background: white;
+  border-radius: 24rpx 24rpx 0 0;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 40rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.detail-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.detail-close {
+  font-size: 32rpx;
+  color: #999;
+  padding: 8rpx;
+}
+
+.detail-video {
+  padding: 20rpx;
+}
+
+.animation-video {
+  width: 100%;
+  height: 400rpx;
+  border-radius: 12rpx;
+}
+
+.detail-preview {
+  padding: 20rpx;
+}
+
+.courseware-preview-image {
+  width: 100%;
+  height: 300rpx;
+  border-radius: 12rpx;
+}
+
+.detail-info {
+  padding: 0 40rpx;
+  max-height: 300rpx;
+  overflow-y: auto;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 24rpx;
+  align-items: flex-start;
+}
+
+.info-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.knowledge-tag,
+.courseware-tag {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #666;
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  margin-right: 8rpx;
+  margin-bottom: 8rpx;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 20rpx;
+  padding: 32rpx 40rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+.detail-actions t-button {
+  flex: 1;
+}
+
+/* 加载状态 */
+t-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200rpx;
+}
+
+/* 空状态 */
+t-empty {
+  margin: 80rpx 0;
+}
+
+/* 响应式适配 */
+@media (max-width: 750rpx) {
+  .stats-grid {
+    flex-direction: column;
+    gap: 20rpx;
+  }
+  
+  .stat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20rpx;
+    background: #f8f9fa;
+    border-radius: 12rpx;
+  }
+  
+  .template-item {
+    width: 100%;
+  }
+  
+  .subject-grid {
+    justify-content: space-between;
+  }
+  
+  .subject-item {
+    flex: 1;
+    max-width: calc(33.333% - 12rpx);
+  }
+}
+
+/* 动画效果 */
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animation-detail,
+.courseware-detail {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .courseware-container {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  }
+  
+  .header-section,
+  .generate-config,
+  .generate-result,
+  .animation-categories,
+  .animation-item,
+  .library-filters,
+  .courseware-item {
+    background: rgba(44, 62, 80, 0.9);
+    color: #ecf0f1;
+  }
+  
+  .intro-title,
+  .section-title text,
+  .detail-title {
+    color: #ecf0f1;
+  }
+  
+  .intro-desc,
+  .slide-desc,
+  .animation-desc,
+  .courseware-desc {
+    color: #bdc3c7;
+  }
+  
+  .subject-item,
+  .template-item,
+  .category-tab,
+  .filter-option {
+    background: #34495e;
+    border-color: #4a5f7a;
+    color: #ecf0f1;
+  }
+  
+  .slide-item {
+    background: #34495e;
+  }
+}

@@ -1,0 +1,124 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <view class="user-header">
+      <view class="avatar-section" bindtap="chooseAvatar">
+        <image class="user-avatar" src="{{userInfo.avatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="avatar-edit">
+          <t-icon name="camera" class="edit-icon" />
+        </view>
+      </view>
+      <view class="user-details">
+        <text class="user-name">{{userInfo.name || '未设置姓名'}}</text>
+        <text class="user-type">{{userTypeText}}</text>
+        <text class="user-id">ID: {{userInfo.id || '000000'}}</text>
+      </view>
+    </view>
+    
+    <!-- 学生专用统计 -->
+    <view class="user-stats" wx:if="{{userType === 'student'}}">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalHomework}}</text>
+        <text class="stat-label">总作业</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.completedHomework}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalPoints}}</text>
+        <text class="stat-label">总积分</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">Lv.{{stats.currentLevel}}</text>
+        <text class="stat-label">等级</text>
+      </view>
+    </view>
+
+    <!-- 教师专用统计 -->
+    <view class="user-stats" wx:if="{{userType === 'teacher'}}">
+      <view class="stat-item">
+        <text class="stat-value">{{stats.totalHomework}}</text>
+        <text class="stat-label">布置作业</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo.classCount || 0}}</text>
+        <text class="stat-label">管理班级</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo.studentCount || 0}}</text>
+        <text class="stat-label">学生数量</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value">{{userInfo.experience || 0}}年</text>
+        <text class="stat-label">教学经验</text>
+      </view>
+    </view>
+
+    <!-- 等级进度条 (仅学生) -->
+    <view class="level-progress" wx:if="{{userType === 'student'}}">
+      <view class="progress-info">
+        <text class="progress-text">距离下一级还需 {{stats.nextLevelPoints - stats.totalPoints}} 积分</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{(stats.totalPoints / stats.nextLevelPoints) * 100}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" 
+          wx:for="{{menuItems}}" 
+          wx:key="id"
+          bindtap="onMenuItemTap"
+          data-id="{{item.id}}">
+      <view class="menu-left">
+        <image class="menu-icon" src="{{item.icon}}" />
+        <text class="menu-title">{{item.title}}</text>
+      </view>
+      <view class="menu-right">
+        <view class="menu-badge" wx:if="{{item.badge}}">{{item.badge}}</view>
+        <t-icon name="chevron-right" class="menu-arrow" wx:if="{{item.arrow}}" />
+      </view>
+    </view>
+  </view>
+
+  <!-- Mock控制面板 (开发阶段) -->
+  <view class="mock-control" wx:if="{{showMockControl}}">
+    <view class="section-title">开发工具</view>
+    <view class="mock-item">
+      <view class="mock-left">
+        <t-icon name="play-circle" class="mock-icon" />
+        <text class="mock-title">Mock数据模式</text>
+      </view>
+      <switch class="mock-switch" checked="{{API.isMockEnabled()}}" bindchange="toggleMock"></switch>
+    </view>
+    <view class="mock-item" bindtap="openMockDemo">
+      <view class="mock-left">
+        <t-icon name="desktop" class="mock-icon" />
+        <text class="mock-title">Mock演示页面</text>
+      </view>
+      <t-icon name="chevron-right" class="mock-arrow" />
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="logout">退出登录</button>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text class="version-text">版本 {{app.globalData.version || '1.0.0'}}</text>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-overlay" wx:if="{{loading}}">
+  <view class="loading-content">
+    <image class="loading-icon" src="/images/loading.gif" />
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

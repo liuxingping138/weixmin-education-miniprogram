@@ -1,0 +1,382 @@
+<!--pages/homework/homework.wxml-->
+<view class="homework-container">
+  <!-- 顶部统计信息 -->
+  <view class="homework-header">
+    <view class="stats-card">
+      <view class="stats-grid">
+        <view class="stat-item">
+          <text class="stat-number">{{homeworkStats.total}}</text>
+          <text class="stat-label">总作业</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-number">{{homeworkStats.completed}}</text>
+          <text class="stat-label">已完成</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-number">{{homeworkStats.avgScore}}</text>
+          <text class="stat-label">平均分</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-number">{{homeworkStats.accuracy}}%</text>
+          <text class="stat-label">正确率</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能导航 -->
+  <view class="function-nav">
+    <view class="nav-item {{activeTab === 'list' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="list">
+      <text>作业列表</text>
+    </view>
+    <view class="nav-item {{activeTab === 'mistakes' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="mistakes">
+      <text>错题本</text>
+    </view>
+    <view class="nav-item {{activeTab === 'analysis' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="analysis">
+      <text>学习分析</text>
+    </view>
+  </view>
+
+  <!-- 作业列表 -->
+  <view class="tab-content" wx:if="{{activeTab === 'list'}}">
+    <!-- 筛选器 -->
+    <view class="filter-bar">
+      <view class="filter-tabs">
+        <view class="filter-tab {{statusFilter === 'all' ? 'active' : ''}}" 
+              bindtap="switchStatusFilter" data-status="all">
+          全部
+        </view>
+        <view class="filter-tab {{statusFilter === 'pending' ? 'active' : ''}}" 
+              bindtap="switchStatusFilter" data-status="pending">
+          待完成
+        </view>
+        <view class="filter-tab {{statusFilter === 'completed' ? 'active' : ''}}" 
+              bindtap="switchStatusFilter" data-status="completed">
+          已完成
+        </view>
+        <view class="filter-tab {{statusFilter === 'overdue' ? 'active' : ''}}" 
+              bindtap="switchStatusFilter" data-status="overdue">
+          已逾期
+        </view>
+      </view>
+    </view>
+
+    <!-- 作业列表 -->
+    <view class="homework-list">
+      <view class="homework-item" 
+            wx:for="{{filteredHomework}}" 
+            wx:key="id"
+            bindtap="viewHomeworkDetail"
+            data-homework="{{item}}">
+        <view class="homework-header-info">
+          <view class="homework-title">{{item.title}}</view>
+          <view class="homework-status {{item.status}}">
+            {{item.statusText}}
+          </view>
+        </view>
+        <view class="homework-meta">
+          <view class="meta-item">
+            <text class="meta-label">科目：</text>
+            <text class="meta-value">{{item.subject}}</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">题目：</text>
+            <text class="meta-value">{{item.questionCount}}题</text>
+          </view>
+          <view class="meta-item">
+            <text class="meta-label">截止：</text>
+            <text class="meta-value">{{item.deadline}}</text>
+          </view>
+        </view>
+        <view class="homework-progress" wx:if="{{item.status === 'completed'}}">
+          <view class="progress-info">
+            <text class="score">得分：{{item.score}}/{{item.totalScore}}</text>
+            <text class="accuracy">正确率：{{item.accuracy}}%</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-fill" 
+                  style="width: {{item.accuracy}}%"></view>
+          </view>
+        </view>
+        <view class="homework-actions">
+          <t-button 
+            wx:if="{{item.status === 'pending'}}"
+            size="small" 
+            theme="primary"
+            bindtap="startHomework"
+            data-homework="{{item}}"
+            catch:tap="true"
+          >
+            开始作业
+          </t-button>
+          <t-button 
+            wx:if="{{item.status === 'completed'}}"
+            size="small" 
+            variant="outline"
+            bindtap="viewHomeworkResult"
+            data-homework="{{item}}"
+            catch:tap="true"
+          >
+            查看结果
+          </t-button>
+          <t-button 
+            wx:if="{{item.status === 'overdue'}}"
+            size="small" 
+            variant="outline"
+            disabled
+          >
+            已逾期
+          </t-button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 错题本 -->
+  <view class="tab-content" wx:if="{{activeTab === 'mistakes'}}">
+    <!-- 错题统计 -->
+    <view class="mistakes-stats">
+      <view class="stats-card">
+        <view class="stats-row">
+          <view class="stat-item">
+            <text class="stat-number">{{mistakeStats.total}}</text>
+            <text class="stat-label">错题总数</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-number">{{mistakeStats.mastered}}</text>
+            <text class="stat-label">已掌握</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-number">{{mistakeStats.reviewing}}</text>
+            <text class="stat-label">复习中</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 科目筛选 -->
+    <view class="subject-filter">
+      <scroll-view class="subject-scroll" scroll-x="true">
+        <view class="subject-item {{selectedSubject === 'all' ? 'active' : ''}}" 
+              bindtap="selectSubject" data-subject="all">
+          全部科目
+        </view>
+        <view class="subject-item {{selectedSubject === item.id ? 'active' : ''}}" 
+              wx:for="{{subjects}}" 
+              wx:key="id"
+              bindtap="selectSubject" 
+              data-subject="{{item.id}}">
+          {{item.name}}
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 错题列表 -->
+    <view class="mistake-list">
+      <view class="mistake-item" 
+            wx:for="{{filteredMistakes}}" 
+            wx:key="id"
+            bindtap="viewMistakeDetail"
+            data-mistake="{{item}}">
+        <view class="mistake-header">
+          <view class="mistake-subject">{{item.subject}}</view>
+          <view class="mistake-status {{item.masteryLevel}}">
+            {{item.masteryText}}
+          </view>
+        </view>
+        <view class="mistake-content">
+          <view class="question-text">{{item.questionText}}</view>
+          <view class="mistake-info">
+            <view class="info-item">
+              <text class="info-label">错误次数：</text>
+              <text class="info-value">{{item.mistakeCount}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-label">最近错误：</text>
+              <text class="info-value">{{item.lastMistakeTime}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="mistake-actions">
+          <t-button 
+            size="small" 
+            theme="primary"
+            bindtap="practiceAgain"
+            data-mistake="{{item}}"
+            catch:tap="true"
+          >
+            再次练习
+          </t-button>
+          <t-button 
+            size="small" 
+            variant="outline"
+            bindtap="viewExplanation"
+            data-mistake="{{item}}"
+            catch:tap="true"
+          >
+            查看解析
+          </t-button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 学习分析 -->
+  <view class="tab-content" wx:if="{{activeTab === 'analysis'}}">
+    <!-- 能力雷达图 -->
+    <view class="analysis-section">
+      <view class="section-title">
+        <text class="title-text">📊 能力分析</text>
+        <text class="title-desc">各科目掌握情况</text>
+      </view>
+      <view class="radar-chart">
+        <canvas canvas-id="radarChart" class="chart-canvas"></canvas>
+      </view>
+    </view>
+
+    <!-- 学习趋势 -->
+    <view class="analysis-section">
+      <view class="section-title">
+        <text class="title-text">📈 学习趋势</text>
+        <text class="title-desc">最近30天表现</text>
+      </view>
+      <view class="trend-chart">
+        <canvas canvas-id="trendChart" class="chart-canvas"></canvas>
+      </view>
+    </view>
+
+    <!-- 知识点掌握 -->
+    <view class="analysis-section">
+      <view class="section-title">
+        <text class="title-text">🎯 知识点掌握</text>
+        <text class="title-desc">薄弱环节分析</text>
+      </view>
+      <view class="knowledge-list">
+        <view class="knowledge-item" 
+              wx:for="{{knowledgePoints}}" 
+              wx:key="id">
+          <view class="knowledge-info">
+            <view class="knowledge-name">{{item.name}}</view>
+            <view class="knowledge-subject">{{item.subject}}</view>
+          </view>
+          <view class="knowledge-progress">
+            <view class="progress-bar">
+              <view class="progress-fill" 
+                    style="width: {{item.mastery}}%; background-color: {{item.mastery >= 80 ? '#67c23a' : item.mastery >= 60 ? '#e6a23c' : '#f56c6c'}}"></view>
+            </view>
+            <text class="progress-text">{{item.mastery}}%</text>
+          </view>
+          <view class="knowledge-actions">
+            <t-button 
+              size="small" 
+              variant="outline"
+              bindtap="practiceKnowledge"
+              data-knowledge="{{item}}"
+            >
+              专项练习
+            </t-button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 学习建议 -->
+    <view class="analysis-section">
+      <view class="section-title">
+        <text class="title-text">💡 学习建议</text>
+        <text class="title-desc">AI智能推荐</text>
+      </view>
+      <view class="suggestion-list">
+        <view class="suggestion-item" 
+              wx:for="{{suggestions}}" 
+              wx:key="id">
+          <view class="suggestion-icon">{{item.icon}}</view>
+          <view class="suggestion-content">
+            <view class="suggestion-title">{{item.title}}</view>
+            <view class="suggestion-desc">{{item.description}}</view>
+          </view>
+          <view class="suggestion-action">
+            <t-button 
+              size="small" 
+              theme="primary"
+              bindtap="applySuggestion"
+              data-suggestion="{{item}}"
+            >
+              去练习
+            </t-button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <t-loading theme="circular" size="large" text="加载中..." />
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && isEmpty}}">
+    <view class="empty-icon">📝</view>
+    <view class="empty-text">暂无数据</view>
+  </view>
+</view>
+
+<!-- Toast提示 -->
+<t-toast 
+  visible="{{showToast}}"
+  message="{{toastMessage}}"
+  duration="{{2000}}"
+  bind:close="onToastClose"
+/>
+
+<!-- 作业详情弹窗 -->
+<t-popup 
+  visible="{{showHomeworkDetail}}"
+  placement="bottom"
+  bind:visible-change="onHomeworkDetailClose"
+>
+  <view class="homework-detail-popup">
+    <view class="popup-header">
+      <view class="popup-title">作业详情</view>
+      <view class="popup-close" bindtap="closeHomeworkDetail">×</view>
+    </view>
+    <view class="popup-content" wx:if="{{selectedHomework}}">
+      <view class="detail-info">
+        <view class="detail-item">
+          <text class="label">标题：</text>
+          <text class="value">{{selectedHomework.title}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="label">科目：</text>
+          <text class="value">{{selectedHomework.subject}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="label">题目数量：</text>
+          <text class="value">{{selectedHomework.questionCount}}题</text>
+        </view>
+        <view class="detail-item">
+          <text class="label">截止时间：</text>
+          <text class="value">{{selectedHomework.deadline}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{selectedHomework.description}}">
+          <text class="label">说明：</text>
+          <text class="value">{{selectedHomework.description}}</text>
+        </view>
+      </view>
+      <view class="detail-actions">
+        <t-button 
+          block 
+          theme="primary" 
+          disabled="{{selectedHomework.status !== 'pending'}}"
+          bindtap="startSelectedHomework"
+        >
+          {{selectedHomework.status === 'pending' ? '开始作业' : selectedHomework.status === 'completed' ? '已完成' : '已逾期'}}
+        </t-button>
+      </view>
+    </view>
+  </view>
+</t-popup>
