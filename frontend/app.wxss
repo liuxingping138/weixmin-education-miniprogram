@@ -1,28 +1,30 @@
-/* 全局样式 - 简洁版班级管理 */
+/**
+ * 智慧教育小程序 - 全局样式
+ * @description 简洁版本的全局样式定义
+ * @author CodeBuddy
+ */
 
-/* 基础样式重置 */
+/* 全局重置 */
 page {
   background-color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
   font-size: 28rpx;
   line-height: 1.6;
+  color: #333;
 }
 
-/* 容器样式 */
+/* 通用容器 */
 .container {
   padding: 20rpx;
-  min-height: 100vh;
 }
 
-.page-container {
-  padding: 20rpx;
-  background-color: #f5f5f5;
-  min-height: 100vh;
+.safe-area {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* 卡片样式 */
 .card {
-  background-color: #ffffff;
+  background: white;
   border-radius: 16rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
@@ -32,165 +34,416 @@ page {
 .card-title {
   font-size: 32rpx;
   font-weight: 600;
-  color: #333333;
+  color: #333;
   margin-bottom: 20rpx;
 }
 
 /* 按钮样式 */
 .btn {
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  padding: 20rpx 40rpx;
-  border: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 20rpx 32rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  transition: all 0.2s ease;
+  text-align: center;
+  line-height: 1;
 }
 
 .btn-primary {
-  background-color: #4A90E2;
-  color: #ffffff;
+  background-color: #007aff;
+  color: white;
+}
+
+.btn-primary:active {
+  background-color: #0056cc;
 }
 
 .btn-secondary {
   background-color: #f0f0f0;
-  color: #666666;
+  color: #333;
+}
+
+.btn-secondary:active {
+  background-color: #e0e0e0;
+}
+
+.btn-danger {
+  background-color: #ff3b30;
+  color: white;
+}
+
+.btn-danger:active {
+  background-color: #d70015;
 }
 
 .btn-small {
-  padding: 12rpx 24rpx;
+  padding: 12rpx 20rpx;
   font-size: 24rpx;
+}
+
+.btn-large {
+  padding: 28rpx 48rpx;
+  font-size: 32rpx;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 输入框样式 */
+.input {
+  background-color: #f8f8f8;
+  border: 1rpx solid #e0e0e0;
   border-radius: 8rpx;
+  padding: 20rpx 16rpx;
+  font-size: 28rpx;
+  color: #333;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #007aff;
+  background-color: white;
+}
+
+.input-error {
+  border-color: #ff3b30;
 }
 
 /* 标签样式 */
 .tag {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 8rpx 16rpx;
-  border-radius: 20rpx;
-  font-size: 22rpx;
-  margin: 4rpx 8rpx 4rpx 0;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  line-height: 1;
 }
 
 .tag-primary {
-  background-color: #E3F2FD;
-  color: #1976D2;
+  background-color: #007aff20;
+  color: #007aff;
 }
 
 .tag-success {
-  background-color: #E8F5E8;
-  color: #2E7D32;
+  background-color: #34c75920;
+  color: #34c759;
 }
 
 .tag-warning {
-  background-color: #FFF3E0;
-  color: #F57C00;
+  background-color: #ff950020;
+  color: #ff9500;
 }
 
 .tag-danger {
-  background-color: #FFEBEE;
-  color: #C62828;
+  background-color: #ff3b3020;
+  color: #ff3b30;
+}
+
+.tag-gray {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background-color: #f0f0f0;
+  margin: 20rpx 0;
+}
+
+.divider-thick {
+  height: 16rpx;
+  background-color: #f5f5f5;
+  margin: 0 -20rpx;
 }
 
 /* 列表样式 */
+.list {
+  background: white;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
 .list-item {
-  background-color: #ffffff;
-  padding: 30rpx;
-  border-bottom: 1rpx solid #f0f0f0;
   display: flex;
   align-items: center;
+  padding: 24rpx 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  transition: background-color 0.2s ease;
 }
 
 .list-item:last-child {
   border-bottom: none;
 }
 
+.list-item:active {
+  background-color: #f8f8f8;
+}
+
 .list-item-content {
   flex: 1;
+  min-width: 0;
 }
 
 .list-item-title {
   font-size: 30rpx;
-  color: #333333;
   font-weight: 500;
+  color: #333;
+  margin-bottom: 4rpx;
 }
 
 .list-item-desc {
-  font-size: 26rpx;
-  color: #999999;
-  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #999;
+  line-height: 1.4;
 }
 
-/* 统计数据样式 */
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20rpx;
+.list-item-arrow {
+  font-size: 28rpx;
+  color: #ccc;
+  margin-left: 16rpx;
+}
+
+/* 状态样式 */
+.status-active {
+  color: #34c759;
+}
+
+.status-inactive {
+  color: #ff9500;
+}
+
+.status-disabled {
+  color: #999;
+}
+
+/* 加载动画 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.loading-spinner {
+  width: 40rpx;
+  height: 40rpx;
+  border: 3rpx solid #e5e5e5;
+  border-top: 3rpx solid #007aff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-left: 16rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #666;
   margin-bottom: 30rpx;
 }
 
-.stats-item {
-  background-color: #ffffff;
-  padding: 30rpx;
-  border-radius: 16rpx;
-  text-align: center;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
-}
-
-.stats-number {
-  font-size: 48rpx;
-  font-weight: 600;
-  color: #4A90E2;
-  line-height: 1;
-}
-
-.stats-label {
-  font-size: 24rpx;
-  color: #999999;
-  margin-top: 8rpx;
-}
-
-/* 工具类 */
-.text-center {
+/* 错误状态 */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
   text-align: center;
 }
 
-.text-primary {
-  color: #4A90E2;
-}
-
-.text-success {
-  color: #2E7D32;
-}
-
-.text-warning {
-  color: #F57C00;
-}
-
-.text-danger {
-  color: #C62828;
-}
-
-.mb-20 {
+.error-icon {
+  font-size: 80rpx;
   margin-bottom: 20rpx;
 }
 
-.mt-20 {
-  margin-top: 20rpx;
+.error-text {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 30rpx;
 }
 
+/* 浮动操作按钮 */
+.fab {
+  position: fixed;
+  bottom: 40rpx;
+  right: 40rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background-color: #007aff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.3);
+  z-index: 100;
+  transition: transform 0.2s ease;
+}
+
+.fab:active {
+  transform: scale(0.9);
+}
+
+.fab-icon {
+  font-size: 48rpx;
+  color: white;
+  font-weight: 300;
+}
+
+/* 工具类 */
 .flex {
   display: flex;
 }
 
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .flex-center {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-primary {
+  color: #007aff;
+}
+
+.text-success {
+  color: #34c759;
+}
+
+.text-warning {
+  color: #ff9500;
+}
+
+.text-danger {
+  color: #ff3b30;
+}
+
+.text-gray {
+  color: #666;
+}
+
+.text-light {
+  color: #999;
+}
+
+.font-bold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.font-normal {
+  font-weight: 400;
+}
+
+.margin-top {
+  margin-top: 20rpx;
+}
+
+.margin-bottom {
+  margin-bottom: 20rpx;
+}
+
+.margin-left {
+  margin-left: 20rpx;
+}
+
+.margin-right {
+  margin-right: 20rpx;
+}
+
+.padding {
+  padding: 20rpx;
+}
+
+.padding-top {
+  padding-top: 20rpx;
+}
+
+.padding-bottom {
+  padding-bottom: 20rpx;
+}
+
+.padding-left {
+  padding-left: 20rpx;
+}
+
+.padding-right {
+  padding-right: 20rpx;
+}
+
+/* 响应式 */
+@media (max-width: 375px) {
+  .container {
+    padding: 16rpx;
+  }
+  
+  .card {
+    padding: 24rpx;
+    margin-bottom: 16rpx;
+  }
 }

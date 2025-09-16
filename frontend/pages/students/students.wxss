@@ -1,0 +1,589 @@
+/* 学生管理页面样式 */
+.students-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 120rpx;
+}
+
+/* 搜索区域 */
+.search-section {
+  background: white;
+  padding: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  position: relative;
+  background-color: #f8f8f8;
+  border-radius: 24rpx;
+  padding: 0 20rpx;
+}
+
+.search-input {
+  height: 72rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.clear-search {
+  position: absolute;
+  right: 20rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32rpx;
+  height: 32rpx;
+  background-color: #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+  color: white;
+}
+
+.filter-btn {
+  padding: 20rpx 24rpx;
+  background-color: #007aff;
+  color: white;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+}
+
+/* 活跃筛选条件 */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 20rpx;
+  align-items: center;
+}
+
+.filter-tag {
+  background-color: #007aff;
+  color: white;
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+}
+
+.clear-filters {
+  color: #007aff;
+  font-size: 26rpx;
+  padding: 8rpx 16rpx;
+}
+
+/* 操作栏 */
+.action-bar {
+  background: white;
+  padding: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.student-count {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.action-btn {
+  padding: 12rpx 20rpx;
+  background-color: #007aff;
+  color: white;
+  border-radius: 20rpx;
+  font-size: 26rpx;
+}
+
+.action-btn.secondary {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.action-btn.danger {
+  background-color: #ff3b30;
+}
+
+.selection-actions {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.selected-count {
+  font-size: 26rpx;
+  color: #007aff;
+}
+
+/* 主要内容区域 */
+.students-content {
+  padding: 20rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #e5e5e5;
+  border-top: 4rpx solid #007aff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner.small {
+  width: 40rpx;
+  height: 40rpx;
+  border-width: 3rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 错误状态 */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+  padding: 40rpx;
+}
+
+.error-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.error-message {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.retry-btn {
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+}
+
+/* 空状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+  padding: 40rpx;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-message {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 30rpx;
+}
+
+.add-btn {
+  background-color: #007aff;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+}
+
+/* 学生列表 */
+.student-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.student-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  display: flex;
+  align-items: flex-start;
+  gap: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.student-card:active {
+  transform: scale(0.98);
+}
+
+.student-card.selection-mode {
+  padding-left: 80rpx;
+}
+
+.student-card.selected {
+  border: 2rpx solid #007aff;
+  background-color: #f0f8ff;
+}
+
+/* 选择框 */
+.selection-checkbox {
+  position: absolute;
+  left: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.checkbox {
+  width: 40rpx;
+  height: 40rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: white;
+}
+
+.checkbox.checked {
+  background-color: #007aff;
+  border-color: #007aff;
+}
+
+/* 学生头像 */
+.student-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-image {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  border: 2rpx solid white;
+}
+
+.status-indicator.active {
+  background-color: #34c759;
+}
+
+.status-indicator.inactive {
+  background-color: #ff9500;
+}
+
+/* 学生信息 */
+.student-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.student-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.student-grade {
+  background-color: #f0f0f0;
+  color: #666;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+}
+
+.student-details {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 12rpx;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.detail-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.detail-value {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 学生标签 */
+.student-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin-bottom: 12rpx;
+}
+
+.tag {
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+/* 最后活跃时间 */
+.last-active {
+  font-size: 22rpx;
+  color: #999;
+}
+
+/* 进度区域 */
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8rpx;
+  min-width: 100rpx;
+}
+
+.progress-bar {
+  width: 80rpx;
+  height: 8rpx;
+  background-color: #f0f0f0;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #007aff;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 22rpx;
+  color: #666;
+}
+
+/* 加载更多 */
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  padding: 40rpx;
+}
+
+.no-more {
+  text-align: center;
+  padding: 40rpx;
+  font-size: 26rpx;
+  color: #999;
+}
+
+/* 筛选面板 */
+.filter-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.filter-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.filter-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 24rpx 24rpx 0 0;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.filter-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.filter-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #666;
+}
+
+.filter-section {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.filter-section-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.filter-options {
+  display: flex;
+  gap: 20rpx;
+}
+
+.filter-option {
+  padding: 16rpx 24rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.filter-option.active {
+  border-color: #007aff;
+  background-color: #007aff;
+  color: white;
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.filter-tag-option {
+  padding: 16rpx 24rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  transition: all 0.2s ease;
+}
+
+.filter-tag-option.active {
+  background-color: currentColor;
+  color: white !important;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 20rpx;
+  padding: 30rpx;
+}
+
+.filter-btn {
+  flex: 1;
+  height: 88rpx;
+  border: none;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+}
+
+.filter-btn.primary {
+  background-color: #007aff;
+  color: white;
+}
+
+.filter-btn.secondary {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* 悬浮添加按钮 */
+.fab {
+  position: fixed;
+  bottom: 40rpx;
+  right: 40rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background-color: #007aff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.3);
+  z-index: 100;
+  transition: transform 0.2s ease;
+}
+
+.fab:active {
+  transform: scale(0.9);
+}
+
+.fab-icon {
+  font-size: 48rpx;
+  color: white;
+  font-weight: 300;
+}

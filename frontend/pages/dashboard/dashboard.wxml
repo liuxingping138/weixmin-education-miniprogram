@@ -1,0 +1,133 @@
+<!--概览页面-->
+<view class="dashboard">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:elif="{{error}}" class="error-container">
+    <view class="error-icon">⚠️</view>
+    <text class="error-message">{{error}}</text>
+    <button class="retry-btn" bindtap="onRetry">重试</button>
+  </view>
+
+  <!-- 正常内容 -->
+  <view wx:else class="dashboard-content">
+    <!-- 统计卡片区域 -->
+    <view class="stats-section">
+      <view class="section-title">数据概览</view>
+      
+      <view class="stats-grid">
+        <!-- 学生统计 -->
+        <view class="stat-card" bindtap="onGoToStudents">
+          <view class="stat-icon student-icon">👥</view>
+          <view class="stat-content">
+            <view class="stat-number">{{stats.students.total}}</view>
+            <view class="stat-label">总学生数</view>
+            <view class="stat-detail">
+              活跃: {{stats.students.active}} | 非活跃: {{stats.students.inactive}}
+            </view>
+          </view>
+        </view>
+
+        <!-- 标签统计 -->
+        <view class="stat-card" bindtap="onGoToTags">
+          <view class="stat-icon tag-icon">🏷️</view>
+          <view class="stat-content">
+            <view class="stat-number">{{stats.tags.total}}</view>
+            <view class="stat-label">标签总数</view>
+            <view class="stat-detail">
+              系统: {{stats.tags.system}} | 自定义: {{stats.tags.custom}}
+            </view>
+          </view>
+        </view>
+
+        <!-- 平均进度 -->
+        <view class="stat-card">
+          <view class="stat-icon progress-icon">📊</view>
+          <view class="stat-content">
+            <view class="stat-number">{{stats.students.avgProgress}}%</view>
+            <view class="stat-label">平均进度</view>
+            <view class="stat-detail">学习完成度</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 年级分布 -->
+    <view class="grade-section" wx:if="{{Object.keys(gradeDistribution).length > 0}}">
+      <view class="section-title">年级分布</view>
+      <view class="grade-list">
+        <view 
+          wx:for="{{Object.keys(gradeDistribution)}}" 
+          wx:key="*this"
+          class="grade-item"
+        >
+          <view class="grade-name">{{item}}</view>
+          <view class="grade-count">{{gradeDistribution[item]}}人</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 最近活跃学生 -->
+    <view class="recent-section" wx:if="{{recentActiveStudents.length > 0}}">
+      <view class="section-header">
+        <view class="section-title">最近活跃</view>
+        <view class="section-more" bindtap="onGoToStudents">查看全部</view>
+      </view>
+      
+      <view class="student-list">
+        <view 
+          wx:for="{{recentActiveStudents}}" 
+          wx:key="id"
+          class="student-item"
+          data-student-id="{{item.id}}"
+          bindtap="onGoToStudentDetail"
+        >
+          <view class="student-avatar">
+            <image 
+              src="{{item.avatar || '/images/default-avatar.png'}}" 
+              class="avatar-image"
+              mode="aspectFill"
+            />
+          </view>
+          <view class="student-info">
+            <view class="student-name">{{item.name}}</view>
+            <view class="student-grade">{{item.grade}}</view>
+            <view class="student-time">{{item.lastActiveTime}}</view>
+          </view>
+          <view class="student-progress">
+            <view class="progress-bar">
+              <view 
+                class="progress-fill" 
+                style="width: {{item.progress}}%"
+              ></view>
+            </view>
+            <view class="progress-text">{{item.progress}}%</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快速操作 -->
+    <view class="action-section">
+      <view class="section-title">快速操作</view>
+      <view class="action-grid">
+        <view class="action-item" bindtap="onAddStudent">
+          <view class="action-icon">➕</view>
+          <view class="action-text">添加学生</view>
+        </view>
+        <view class="action-item" bindtap="onGoToStudents">
+          <view class="action-icon">👥</view>
+          <view class="action-text">学生管理</view>
+        </view>
+        <view class="action-item" bindtap="onGoToTags">
+          <view class="action-icon">🏷️</view>
+          <view class="action-text">标签管理</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

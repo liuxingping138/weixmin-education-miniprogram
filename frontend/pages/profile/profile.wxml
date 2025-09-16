@@ -1,0 +1,85 @@
+<!--个人资料页面-->
+<view class="profile-page">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <!-- 背景装饰 -->
+    <view class="card-bg"></view>
+    
+    <!-- 用户头像和基本信息 -->
+    <view class="user-info">
+      <view class="avatar-section">
+        <image 
+          src="{{userInfo.avatar}}" 
+          class="user-avatar"
+          mode="aspectFill"
+        />
+        <view class="edit-avatar" bindtap="onEditProfile">
+          <text class="edit-icon">✏️</text>
+        </view>
+      </view>
+      
+      <view class="user-details">
+        <view class="user-name">{{userInfo.name}}</view>
+        <view class="user-school">{{userInfo.school}}</view>
+        <view class="user-subject">{{userInfo.subject}}老师 · {{userInfo.teachingYears}}年教龄</view>
+      </view>
+    </view>
+    
+    <!-- 统计信息 -->
+    <view class="stats-section">
+      <view class="stat-item">
+        <view class="stat-number">{{userInfo.studentCount}}</view>
+        <view class="stat-label">学生数量</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <view class="stat-number">{{userInfo.tagCount}}</view>
+        <view class="stat-label">标签数量</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <view class="stat-number">{{userInfo.teachingYears}}</view>
+        <view class="stat-label">教龄(年)</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-container">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 错误状态 -->
+    <view wx:elif="{{error}}" class="error-container">
+      <view class="error-icon">⚠️</view>
+      <text class="error-message">{{error}}</text>
+      <button class="retry-btn" bindtap="onRetry">重试</button>
+    </view>
+
+    <!-- 菜单列表 -->
+    <view wx:else class="menu-list">
+      <view 
+        wx:for="{{menuItems}}" 
+        wx:key="id"
+        class="menu-item"
+        data-item-id="{{item.id}}"
+        bindtap="onMenuItemTap"
+      >
+        <view class="menu-icon">{{item.icon}}</view>
+        <view class="menu-content">
+          <view class="menu-title">{{item.title}}</view>
+          <view class="menu-desc">{{item.desc}}</view>
+        </view>
+        <view class="menu-arrow">›</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text class="version-text">智慧教育小程序 v1.0.0</text>
+  </view>
+</view>

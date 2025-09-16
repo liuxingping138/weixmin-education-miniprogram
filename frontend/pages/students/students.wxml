@@ -1,0 +1,223 @@
+<!--学生管理页面-->
+<view class="students-page">
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <view class="search-input-wrapper">
+        <input 
+          class="search-input"
+          placeholder="搜索学生姓名、年级..."
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+        />
+        <view wx:if="{{searchKeyword}}" class="clear-search" bindtap="onClearSearch">
+          ✕
+        </view>
+      </view>
+      <view class="filter-btn" bindtap="onShowFilter">
+        筛选
+      </view>
+    </view>
+    
+    <!-- 筛选条件显示 -->
+    <view wx:if="{{filters.status || filters.tags.length > 0}}" class="active-filters">
+      <view wx:if="{{filters.status}}" class="filter-tag">
+        状态: {{filters.status === 'active' ? '活跃' : '非活跃'}}
+      </view>
+      <view wx:for="{{filters.tags}}" wx:key="*this" class="filter-tag">
+        {{getTagName(item)}}
+      </view>
+      <view class="clear-filters" bindtap="onClearFilter">清空</view>
+    </view>
+  </view>
+
+  <!-- 操作栏 -->
+  <view class="action-bar">
+    <view class="student-count">
+      共 {{pagination.total}} 个学生
+    </view>
+    <view class="action-buttons">
+      <view wx:if="{{!isSelectionMode}}" class="action-btn" bindtap="onToggleSelectionMode">
+        批量操作
+      </view>
+      <view wx:else class="selection-actions">
+        <view class="selected-count">已选 {{selectedStudents.length}}</view>
+        <view class="action-btn secondary" bindtap="onToggleSelectAll">
+          {{selectedStudents.length === students.length ? '取消全选' : '全选'}}
+        </view>
+        <view class="action-btn danger" bindtap="onBatchDelete">删除</view>
+        <view class="action-btn" bindtap="onToggleSelectionMode">取消</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 学生列表 -->
+  <view class="students-content">
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading-container">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 错误状态 -->
+    <view wx:elif="{{error}}" class="error-container">
+      <view class="error-icon">⚠️</view>
+      <text class="error-message">{{error}}</text>
+      <button class="retry-btn" bindtap="onRetry">重试</button>
+    </view>
+
+    <!-- 空状态 -->
+    <view wx:elif="{{students.length === 0}}" class="empty-container">
+      <view class="empty-icon">👥</view>
+      <text class="empty-message">暂无学生数据</text>
+      <button class="add-btn" bindtap="onAddStudent">添加第一个学生</button>
+    </view>
+
+    <!-- 学生列表 -->
+    <view wx:else class="student-list">
+      <view 
+        wx:for="{{students}}" 
+        wx:key="id"
+        class="student-card {{isSelectionMode ? 'selection-mode' : ''}} {{selectedStudents.indexOf(item.id) > -1 ? 'selected' : ''}}"
+        data-student-id="{{item.id}}"
+        bindtap="onGoToStudentDetail"
+      >
+        <!-- 选择框 -->
+        <view wx:if="{{isSelectionMode}}" class="selection-checkbox">
+          <view class="checkbox {{selectedStudents.indexOf(item.id) > -1 ? 'checked' : ''}}">
+            <text wx:if="{{selectedStudents.indexOf(item.id) > -1}}">✓</text>
+          </view>
+        </view>
+
+        <!-- 学生头像 -->
+        <view class="student-avatar">
+          <image 
+            src="{{item.avatar || '/images/default-avatar.png'}}" 
+            class="avatar-image"
+            mode="aspectFill"
+          />
+          <view class="status-indicator {{item.status}}"></view>
+        </view>
+
+        <!-- 学生信息 -->
+        <view class="student-info">
+          <view class="student-header">
+            <view class="student-name">{{item.name}}</view>
+            <view class="student-grade">{{item.grade}}</view>
+          </view>
+          
+          <view class="student-details">
+            <view class="detail-item">
+              <text class="detail-label">年龄:</text>
+              <text class="detail-value">{{item.age}}岁</text>
+            </view>
+            <view class="detail-item">
+              <text class="detail-label">进度:</text>
+              <text class="detail-value">{{item.progress}}%</text>
+            </view>
+          </view>
+
+          <!-- 学生标签 -->
+          <view wx:if="{{item.tags && item.tags.length > 0}}" class="student-tags">
+            <view 
+              wx:for="{{item.tags}}" 
+              wx:for-item="tagId"
+              wx:key="*this"
+              class="tag"
+              style="background-color: {{getTagColor(tagId)}}20; color: {{getTagColor(tagId)}}"
+            >
+              {{getTagName(tagId)}}
+            </view>
+          </view>
+
+          <!-- 最后活跃时间 -->
+          <view class="last-active">
+            最后活跃: {{item.lastActiveTime}}
+          </view>
+        </view>
+
+        <!-- 进度条 -->
+        <view class="progress-section">
+          <view class="progress-bar">
+            <view 
+              class="progress-fill" 
+              style="width: {{item.progress}}%"
+            ></view>
+          </view>
+          <view class="progress-text">{{item.progress}}%</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view wx:if="{{loadingMore}}" class="loading-more">
+      <view class="loading-spinner small"></view>
+      <text class="loading-text">加载更多...</text>
+    </view>
+
+    <!-- 没有更多数据 -->
+    <view wx:if="{{!pagination.hasMore && students.length > 0}}" class="no-more">
+      没有更多数据了
+    </view>
+  </view>
+
+  <!-- 筛选面板 -->
+  <view wx:if="{{showFilterPanel}}" class="filter-panel">
+    <view class="filter-mask" bindtap="onHideFilter"></view>
+    <view class="filter-content">
+      <view class="filter-header">
+        <view class="filter-title">筛选条件</view>
+        <view class="filter-close" bindtap="onHideFilter">✕</view>
+      </view>
+
+      <!-- 状态筛选 -->
+      <view class="filter-section">
+        <view class="filter-section-title">学生状态</view>
+        <view class="filter-options">
+          <view 
+            class="filter-option {{filters.status === 'active' ? 'active' : ''}}"
+            data-status="active"
+            bindtap="onStatusFilter"
+          >
+            活跃学生
+          </view>
+          <view 
+            class="filter-option {{filters.status === 'inactive' ? 'active' : ''}}"
+            data-status="inactive"
+            bindtap="onStatusFilter"
+          >
+            非活跃学生
+          </view>
+        </view>
+      </view>
+
+      <!-- 标签筛选 -->
+      <view class="filter-section">
+        <view class="filter-section-title">标签筛选</view>
+        <view class="filter-tags">
+          <view 
+            wx:for="{{tags}}" 
+            wx:key="id"
+            class="filter-tag-option {{filters.tags.indexOf(item.id) > -1 ? 'active' : ''}}"
+            data-tag-id="{{item.id}}"
+            bindtap="onTagFilter"
+            style="border-color: {{item.color}}; color: {{filters.tags.indexOf(item.id) > -1 ? item.color : '#666'}}"
+          >
+            {{item.name}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 筛选操作 -->
+      <view class="filter-actions">
+        <button class="filter-btn secondary" bindtap="onClearFilter">清空筛选</button>
+        <button class="filter-btn primary" bindtap="onHideFilter">确定</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view wx:if="{{!isSelectionMode}}" class="fab" bindtap="onAddStudent">
+    <text class="fab-icon">+</text>
+  </view>
+</view>
